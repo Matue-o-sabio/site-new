@@ -1,1 +1,548 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JoJo's Bizarre Adventure · Partes</title>
+    <style>
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            font-family: 'Segoe UI', 'Arial', system-ui, sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: #1a1a1a;
+            color: #f0f0f0;
+            line-height: 1.6;
+        }
+
+        /* ===== MENU DE ABAS (TABS) ===== */
+        .tab-menu {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.4rem 0.2rem;
+            padding: 0.8rem 1rem;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(6px);
+            border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ddd;
+            padding: 0.5rem 1.1rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .tab-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: #ffd700;
+            transform: scale(1.02);
+        }
+
+        .tab-btn.active {
+            background: #ffd700;
+            color: #1a1a1a;
+            border-color: #ffd700;
+            box-shadow: 0 0 16px #ffd70088;
+            text-shadow: none;
+        }
+
+        /* ===== CONTEÚDO PRINCIPAL ===== */
+        .container {
+            flex: 1;
+            max-width: 1100px;
+            margin: 2rem auto;
+            padding: 1.5rem 2rem;
+            width: 100%;
+            transition: all 0.3s ease;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(2px);
+            border-radius: 32px 32px 16px 16px;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+        }
+
+        .part-content {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0.2; transform: translateY(10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .part-title {
+            font-size: 2.6rem;
+            font-weight: 900;
+            margin-bottom: 0.5rem;
+            letter-spacing: 2px;
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.3);
+            border-left: 6px solid currentColor;
+            padding-left: 1rem;
+        }
+
+        .part-sub {
+            font-size: 1.1rem;
+            opacity: 0.85;
+            margin-bottom: 1.8rem;
+            font-style: italic;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.15);
+            padding-bottom: 0.6rem;
+        }
+
+        .part-text p {
+            margin-bottom: 1.2rem;
+            font-size: 1.1rem;
+            background: rgba(0, 0, 0, 0.25);
+            padding: 0.8rem 1.2rem;
+            border-radius: 16px;
+            backdrop-filter: blur(2px);
+        }
+
+        .part-text p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* ===== TEMAS (variáveis CSS por parte) ===== */
+        /* A classe 'theme-pX' é aplicada ao body via JS */
+
+        /* Tema padrão (fallback) */
+        body {
+            --bg-start: #1a1a1a;
+            --bg-end: #2a2a2a;
+            --text-color: #eee;
+            --accent: #ffd700;
+            --card-bg: rgba(0,0,0,0.4);
+            --border-glow: #ffd70044;
+        }
+
+        /* Parte 1: Phantom Blood - Gótico Vitoriano */
+        body.theme-p1 {
+            --bg-start: #1e0a0a;
+            --bg-end: #2b1010;
+            --text-color: #f0d5c5;
+            --accent: #c99b3b;
+            --card-bg: rgba(40, 10, 10, 0.7);
+            --border-glow: #8b2a2a88;
+            background: radial-gradient(circle at 20% 30%, #3a1515, #1a0707);
+        }
+        body.theme-p1 .tab-btn.active {
+            background: #c99b3b;
+            border-color: #d4af37;
+            color: #1a0a0a;
+        }
+
+        /* Parte 2: Battle Tendency - Anos 30 / Asteca */
+        body.theme-p2 {
+            --bg-start: #281a3a;
+            --bg-end: #1f0f2f;
+            --text-color: #e4f0b0;
+            --accent: #b3ff00;
+            --card-bg: rgba(40, 20, 60, 0.7);
+            --border-glow: #b3ff0088;
+            background: radial-gradient(circle at 70% 20%, #4a2a6a, #1e1030);
+        }
+        body.theme-p2 .tab-btn.active {
+            background: #b3ff00;
+            border-color: #ccff44;
+            color: #1a0a2a;
+        }
+
+        /* Parte 3: Stardust Crusaders - Deserto / Tarô */
+        body.theme-p3 {
+            --bg-start: #3a2810;
+            --bg-end: #1e1a30;
+            --text-color: #f5e6c4;
+            --accent: #f0a030;
+            --card-bg: rgba(40, 30, 10, 0.7);
+            --border-glow: #f0a03088;
+            background: radial-gradient(circle at 80% 40%, #6a4a20, #1c1830);
+        }
+        body.theme-p3 .tab-btn.active {
+            background: #f0a030;
+            border-color: #ffb347;
+            color: #1a140a;
+        }
+
+        /* Parte 4: Diamond is Unbreakable - Pop Art 90's */
+        body.theme-p4 {
+            --bg-start: #ffe066;
+            --bg-end: #c99bff;
+            --text-color: #1f1a2a;
+            --accent: #ff4d94;
+            --card-bg: rgba(255, 255, 220, 0.7);
+            --border-glow: #ff4d9488;
+            background: radial-gradient(circle at 30% 60%, #ffdd99, #cc88ff);
+        }
+        body.theme-p4 .tab-btn {
+            color: #1a1a2a;
+        }
+        body.theme-p4 .tab-btn.active {
+            background: #ff4d94;
+            border-color: #ff66aa;
+            color: #1a0a1a;
+        }
+        body.theme-p4 .part-text p {
+            background: rgba(255, 255, 200, 0.6);
+            color: #1a1a2a;
+        }
+
+        /* Parte 5: Golden Wind - Máfia / Renascença */
+        body.theme-p5 {
+            --bg-start: #1a0a0a;
+            --bg-end: #2a1018;
+            --text-color: #f5e0c0;
+            --accent: #d4af37;
+            --card-bg: rgba(60, 10, 20, 0.7);
+            --border-glow: #d4af3788;
+            background: radial-gradient(circle at 50% 20%, #5a1a2a, #1a0a0a);
+        }
+        body.theme-p5 .tab-btn.active {
+            background: #d4af37;
+            border-color: #f0c040;
+            color: #1a0a0a;
+        }
+
+        /* Parte 6: Stone Ocean - Prisão / Punk */
+        body.theme-p6 {
+            --bg-start: #1a2a1a;
+            --bg-end: #0a1a2a;
+            --text-color: #b0f0d0;
+            --accent: #00e6b0;
+            --card-bg: rgba(10, 40, 30, 0.7);
+            --border-glow: #00e6b088;
+            background: radial-gradient(circle at 20% 80%, #2a5a3a, #0a1a2a);
+        }
+        body.theme-p6 .tab-btn.active {
+            background: #00e6b0;
+            border-color: #44ffcc;
+            color: #0a1a1a;
+        }
+
+        /* Parte 7: Steel Ball Run - Velho Oeste / Steampunk */
+        body.theme-p7 {
+            --bg-start: #3a2a1a;
+            --bg-end: #2a1a0a;
+            --text-color: #f0e0c0;
+            --accent: #b8966a;
+            --card-bg: rgba(50, 30, 10, 0.7);
+            --border-glow: #b8966a88;
+            background: radial-gradient(circle at 60% 40%, #5a4020, #1a1008);
+        }
+        body.theme-p7 .tab-btn.active {
+            background: #b8966a;
+            border-color: #d4b08a;
+            color: #1a1008;
+        }
+
+        /* Parte 8: JoJolion - Náutico / Mistério */
+        body.theme-p8 {
+            --bg-start: #0a2a3a;
+            --bg-end: #1a1a3a;
+            --text-color: #d0e8f0;
+            --accent: #5aa0c0;
+            --card-bg: rgba(10, 40, 60, 0.7);
+            --border-glow: #5aa0c088;
+            background: radial-gradient(circle at 30% 30%, #1a4a6a, #0a1a2a);
+        }
+        body.theme-p8 .tab-btn.active {
+            background: #5aa0c0;
+            border-color: #7ac0e0;
+            color: #0a1a2a;
+        }
+
+        /* Parte 9: The JOJOLands - Tropical / Havaí */
+        body.theme-p9 {
+            --bg-start: #1a3a1a;
+            --bg-end: #0a2a1a;
+            --text-color: #e0f0c0;
+            --accent: #2ecc71;
+            --card-bg: rgba(10, 50, 20, 0.7);
+            --border-glow: #2ecc7188;
+            background: radial-gradient(circle at 80% 10%, #2a6a2a, #0a2a1a);
+        }
+        body.theme-p9 .tab-btn.active {
+            background: #2ecc71;
+            border-color: #5ae09a;
+            color: #0a1a0a;
+        }
+
+        /* Ajustes de legibilidade para todos os temas */
+        body {
+            color: var(--text-color);
+            background: var(--bg-start);
+        }
+
+        .container {
+            background: var(--card-bg);
+            border-left: 2px solid var(--accent);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px var(--border-glow);
+        }
+
+        .part-title {
+            color: var(--accent);
+            border-left-color: var(--accent);
+        }
+
+        .tab-btn {
+            color: var(--text-color);
+            border-color: var(--border-glow);
+        }
+
+        .tab-btn.active {
+            background: var(--accent);
+            color: #1a1a1a;
+        }
+
+        /* ===== RESPONSIVIDADE ===== */
+        @media (max-width: 700px) {
+            .tab-menu {
+                gap: 0.3rem;
+                padding: 0.6rem 0.5rem;
+            }
+            .tab-btn {
+                font-size: 0.75rem;
+                padding: 0.3rem 0.8rem;
+            }
+            .container {
+                padding: 1rem 1rem;
+                margin: 1rem;
+                border-radius: 20px;
+            }
+            .part-title {
+                font-size: 2rem;
+            }
+            .part-text p {
+                font-size: 1rem;
+                padding: 0.6rem 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .tab-btn {
+                font-size: 0.7rem;
+                padding: 0.25rem 0.6rem;
+            }
+            .part-title {
+                font-size: 1.6rem;
+            }
+        }
+
+        /* Elementos decorativos sutis (padrões) */
+        body.theme-p4 .container::after {
+            content: "♥ ✌ ☮";
+            display: block;
+            text-align: right;
+            font-size: 2rem;
+            opacity: 0.15;
+            margin-top: 0.5rem;
+            letter-spacing: 10px;
+        }
+
+        body.theme-p7 .container::before {
+            content: "✦ ✧ ★ ✧ ✦";
+            display: block;
+            text-align: center;
+            font-size: 1.8rem;
+            opacity: 0.15;
+            letter-spacing: 12px;
+            margin-bottom: 0.5rem;
+        }
+
+        body.theme-p6 .container::after {
+            content: "🕷️ 🦋";
+            font-size: 2.4rem;
+            opacity: 0.2;
+            display: block;
+            text-align: right;
+        }
+
+        body.theme-p8 .container::after {
+            content: "⛵ ⚓ 🪼";
+            font-size: 2rem;
+            opacity: 0.2;
+            display: block;
+            text-align: right;
+        }
+
+        body.theme-p9 .container::after {
+            content: "🌴 🏝️ 💰";
+            font-size: 2.2rem;
+            opacity: 0.2;
+            display: block;
+            text-align: right;
+        }
+
+        body.theme-p3 .container::after {
+            content: "🃏 ★ ☆";
+            font-size: 2rem;
+            opacity: 0.2;
+            display: block;
+            text-align: right;
+        }
+    </style>
+</head>
+<body class="theme-p1">
+    <!-- MENU DE ABAS -->
+    <nav class="tab-menu" id="tabMenu">
+        <button class="tab-btn active" data-part="1">Parte 1</button>
+        <button class="tab-btn" data-part="2">Parte 2</button>
+        <button class="tab-btn" data-part="3">Parte 3</button>
+        <button class="tab-btn" data-part="4">Parte 4</button>
+        <button class="tab-btn" data-part="5">Parte 5</button>
+        <button class="tab-btn" data-part="6">Parte 6</button>
+        <button class="tab-btn" data-part="7">Parte 7</button>
+        <button class="tab-btn" data-part="8">Parte 8</button>
+        <button class="tab-btn" data-part="9">Parte 9</button>
+    </nav>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="container" id="mainContainer">
+        <div id="partDisplay" class="part-content">
+            <!-- Injetado via JS -->
+        </div>
+    </main>
+
+    <script>
+        (function() {
+            // ===== DADOS DAS PARTES (resumos) =====
+            const partesData = {
+                1: {
+                    titulo: "Parte 1: Phantom Blood",
+                    subtitulo: "A origem da máscara de pedra e o sangue de um cavalheiro.",
+                    texto: `<p><strong>Protagonista:</strong> Jonathan Joestar. <strong>Vilão:</strong> Dio Brando.</p>
+                            <p>No século XIX, a rivalidade entre Jonathan Joestar e seu irmão adotivo, Dio Brando, desencadeia uma guerra sobrenatural. Quando Dio descobre a Máscara de Pedra, que o transforma em um vampiro imortal, Jonathan deve dominar a energia Hamon (Ondas) para detê-lo. Uma história de honra, sacrifício e o início da linhagem Joestar.</p>
+                            <p><em>Conceito central:</em> Hamon, a energia da respiração, utilizada para combater vampiros e criaturas das trevas.</p>`
+                },
+                2: {
+                    titulo: "Parte 2: Battle Tendency",
+                    subtitulo: "Aventura nos anos 30 e o despertar dos Deuses Astecas.",
+                    texto: `<p><strong>Protagonista:</strong> Joseph Joestar. <strong>Vilão:</strong> Kars (e os Pillar Men).</p>
+                            <p>Joseph Joestar, neto de Jonathan, enfrenta uma ameaça maior que os vampiros: os Homens do Pilar, seres imortais criados pela Máscara de Pedra. Com astúcia e seu Hamon improvisado, Joseph viaja pela Europa e América do Sul para deter Kars, que busca se tornar o ser supremo.</p>
+                            <p><em>Conceito central:</em> Hamon evoluído, combinado com estratégias engenhosas e a introdução do "Spin" (Rotações) em menor escala.</p>`
+                },
+                3: {
+                    titulo: "Parte 3: Stardust Crusaders",
+                    subtitulo: "Uma jornada ao Egito sob o signo do Tarô.",
+                    texto: `<p><strong>Protagonista:</strong> Jotaro Kujo. <strong>Vilão:</strong> DIO (o mesmo Dio, agora com um Stand).</p>
+                            <p>Anos depois, a maldição de DIO retorna. Jotaro Kujo e seus aliados — todos portadores de Stands, manifestações físicas do espírito — partem do Japão ao Egito para derrotar DIO de uma vez por todas. Cada Stand tem um nome de carta de Tarô ou divindade egípcia.</p>
+                            <p><em>Conceito central:</em> Stands — poderes psíquicos materializados com habilidades únicas. A viagem é uma batalha contra o tempo e o destino.</p>`
+                },
+                4: {
+                    titulo: "Parte 4: Diamond is Unbreakable",
+                    subtitulo: "Mistério e cotidiano na cidade de Morioh, anos 90.",
+                    texto: `<p><strong>Protagonista:</strong> Josuke Higashikata. <strong>Vilão:</strong> Yoshikage Kira.</p>
+                            <p>Em Morioh, uma cidade pacata, Stands surgem entre os habitantes. Josuke, filho ilegítimo de Joseph, une forças com outros usuários para proteger a cidade de um assassino em série que deseja apenas uma vida tranquila — e que possui um Stand capaz de apagar a existência de suas vítimas.</p>
+                            <p><em>Conceito central:</em> Stands com habilidades criativas, mistério de assassinato e a estética Pop Art dos anos 90. Símbolos da paz e corações permeiam o design.</p>`
+                },
+                5: {
+                    titulo: "Parte 5: Golden Wind",
+                    subtitulo: "Máfia italiana e o sonho de um novo amanhecer.",
+                    texto: `<p><strong>Protagonista:</strong> Giorno Giovanna. <strong>Vilão:</strong> Diavolo (o chefe da Passione).</p>
+                            <p>Giorno, filho de Dio, almeja se tornar um "Gang-Star" e reformar a máfia italiana por dentro. Ao lado de Bruno Bucciarati e sua equipe, ele enfrenta traições, batalhas de Stand implacáveis e o misterioso Diavolo, cujo Stand, King Crimson, pode pular o tempo.</p>
+                            <p><em>Conceito central:</em> Stands com temas de máfia e renascença. O "Golden Wind" representa o destino e a resolução dourada.</p>`
+                },
+                6: {
+                    titulo: "Parte 6: Stone Ocean",
+                    subtitulo: "Prisão, punks e o fim do universo.",
+                    texto: `<p><strong>Protagonista:</strong> Jolyne Cujoh. <strong>Vilão:</strong> Enrico Pucci.</p>
+                            <p>Jolyne, filha de Jotaro, é presa injustamente e descobre que um sacerdote chamado Pucci está manipulando os eventos para alcançar o "Céu". Dentro da prisão de segurança máxima, Jolyne e suas aliadas lutam com Stands únicos contra um plano que pode reiniciar o universo.</p>
+                            <p><em>Conceito central:</em> Stands e o plano de Pucci envolvendo a "Gravidade" e o "Céu". Estética punk, teias e borboletas simbolizam a transformação.</p>`
+                },
+                7: {
+                    titulo: "Parte 7: Steel Ball Run",
+                    subtitulo: "A corrida pelo oeste, entre steampunk e renascença.",
+                    texto: `<p><strong>Protagonista:</strong> Johnny Joestar. <strong>Vilão:</strong> Funny Valentine (e o Stand D4C).</p>
+                            <p>Em uma versão alternativa do século XIX, uma corrida a cavalo de San Diego a Nova York reúne competidores de todo o mundo. Johnny, um paraplégico, busca o poder do "Spin" para recuperar seus movimentos, enquanto o presidente Valentine busca o poder do Santo Coração para manipular as dimensões.</p>
+                            <p><em>Conceito central:</em> Spin (Rotações) e Stands. Temas do Velho Oeste, steampunk e a busca por uma "segunda chance".</p>`
+                },
+                8: {
+                    titulo: "Parte 8: JoJolion",
+                    subtitulo: "Mistério na cidade costeira de Morioh, após o tsunami.",
+                    texto: `<p><strong>Protagonista:</strong> Josuke Higashikata (o oitavo). <strong>Vilão:</strong> Tooru (e o Stand Wonder of U).</p>
+                            <p>Em uma Morioh reformada, um jovem com amnésia é encontrado e adotado pela família Higashikata. Ele busca sua identidade e as origens das "bolhas" que emergem de seu corpo, enquanto enfrenta uma maldição familiar e um Stand que invoca a calamidade para aqueles que o perseguem.</p>
+                            <p><em>Conceito central:</em> Stands, bolhas e mistério. Elementos náuticos e âncoras refletem a cidade litorânea.</p>`
+                },
+                9: {
+                    titulo: "Parte 9: The JOJOLands",
+                    subtitulo: "Ilhas havaianas, dinheiro e o sonho de um novo mundo.",
+                    texto: `<p><strong>Protagonista:</strong> Jodio Joestar. <strong>Vilão:</strong> Ainda em desenvolvimento (mistério nas ilhas).</p>
+                            <p>Ambientado no Havaí, Jodio Joestar e sua irmã Dragona se envolvem em um esquema de contrabando e poder. Entre praias paradisíacas e negócios obscuros, eles descobrem que o dinheiro e o "ouro" podem esconder Stands capazes de alterar a própria realidade.</p>
+                            <p><em>Conceito central:</em> Stands, riqueza e o clima tropical. A estética evoca selva, oceano vibrante e o brilho do ouro.</p>`
+                }
+            };
+
+            // ===== REFERÊNCIAS DOM =====
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            const displayDiv = document.getElementById('partDisplay');
+            const body = document.body;
+
+            // ===== FUNÇÃO PARA TROCAR DE PARTE =====
+            function loadPart(partNumber) {
+                // Atualiza dados
+                const data = partesData[partNumber];
+                if (!data) return;
+
+                // Renderiza o conteúdo
+                displayDiv.innerHTML = `
+                    <h1 class="part-title">${data.titulo}</h1>
+                    <div class="part-sub">${data.subtitulo}</div>
+                    <div class="part-text">${data.texto}</div>
+                `;
+
+                // Atualiza classes dos botões
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                document.querySelector(`.tab-btn[data-part="${partNumber}"]`).classList.add('active');
+
+                // MUDA O TEMA DO BODY
+                // Remove todas as classes theme-p*
+                body.className = body.className.split(' ').filter(c => !c.startsWith('theme-p')).join(' ');
+                body.classList.add(`theme-p${partNumber}`);
+            }
+
+            // ===== EVENTOS DOS BOTÕES =====
+            tabButtons.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    const part = parseInt(this.dataset.part, 10);
+                    loadPart(part);
+                });
+            });
+
+            // ===== CARREGAR PARTE INICIAL (Parte 1) =====
+            loadPart(1);
+
+            // (Opcional) Pequeno toque: teclas 1-9 para navegar
+            document.addEventListener('keydown', (e) => {
+                const num = parseInt(e.key, 10);
+                if (num >= 1 && num <= 9) {
+                    const btn = document.querySelector(`.tab-btn[data-part="${num}"]`);
+                    if (btn) btn.click();
+                }
+            });
+
+        })();
+    </script>
+</body>
+</html>
