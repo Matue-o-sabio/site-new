@@ -3,12 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Melodle · Adivinhe a Música</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>JoJo's Bizarre Adventure · Partes</title>
     <style>
+        /* ===== RESET & BASE ===== */
         * {
             margin: 0;
             padding: 0;
@@ -16,1549 +13,536 @@
         }
 
         body {
-            font-family: 'Space Grotesk', sans-serif;
-            background: #0b081a;
-            background-image: radial-gradient(circle at 30% 10%, #1b1233 0%, #0a0717 80%);
+            font-family: 'Segoe UI', 'Arial', system-ui, sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
             min-height: 100vh;
             display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 1.5rem;
-            color: #f0edff;
-        }
-
-        .game-container {
-            max-width: 900px;
-            width: 100%;
-            background: rgba(18, 14, 34, 0.55);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-radius: 3.5rem;
-            padding: 2rem 2rem 2.5rem;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 70, 200, 0.15), 0 0 30px rgba(180, 0, 255, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            transition: all 0.3s ease;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .header h1 {
-            font-weight: 700;
-            font-size: 2.2rem;
-            background: linear-gradient(135deg, #ff3b9e, #b44cff, #3bc9ff);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            letter-spacing: -0.5px;
-            text-shadow: 0 0 20px rgba(180, 60, 255, 0.4);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .header h1 i {
-            font-size: 2rem;
-            color: #ff6bcb;
-            filter: drop-shadow(0 0 8px #ff3b9e);
-        }
-
-        .header-subtitle {
-            font-size: 0.8rem;
-            color: #a28ed0;
-            letter-spacing: 1px;
-            margin-top: -0.3rem;
-            padding-left: 0.5rem;
-        }
-
-        .stats {
-            display: flex;
-            gap: 1.5rem;
-            background: rgba(255, 255, 255, 0.04);
-            backdrop-filter: blur(4px);
-            padding: 0.5rem 1.5rem;
-            border-radius: 60px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        .stat-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-weight: 500;
-            font-size: 0.9rem;
-            color: #c6b8ff;
-        }
-
-        .stat-item i {
-            color: #ffd966;
-        }
-
-        .stat-item .value {
-            color: white;
-            font-weight: 700;
-            font-size: 1.1rem;
-        }
-
-        .mode-selector {
-            display: flex;
-            gap: 0.5rem;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 0.3rem;
-            border-radius: 60px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .mode-btn {
-            padding: 0.4rem 1.2rem;
-            border: none;
-            border-radius: 60px;
-            background: transparent;
-            color: #a28ed0;
-            font-weight: 600;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: 'Space Grotesk', sans-serif;
-        }
-
-        .mode-btn.active {
-            background: linear-gradient(145deg, #b44cff, #8b2fdb);
-            color: white;
-            box-shadow: 0 0 20px rgba(150, 0, 255, 0.3);
-        }
-
-        .mode-btn:hover:not(.active) {
-            color: white;
-        }
-
-        .lyric-card {
-            background: rgba(28, 20, 48, 0.6);
-            backdrop-filter: blur(8px);
-            border-radius: 2.5rem;
-            padding: 1.8rem 2rem;
-            margin-bottom: 2rem;
-            border: 1px solid rgba(255, 180, 255, 0.08);
-            box-shadow: inset 0 0 30px rgba(180, 0, 255, 0.1), 0 10px 30px -10px #000000aa;
-            text-align: center;
-            transition: all 0.4s ease;
-            min-height: 120px;
-            display: flex;
             flex-direction: column;
-            justify-content: center;
+            background-color: #1a1a1a;
+            color: #f0f0f0;
+            line-height: 1.6;
         }
 
-        .lyric-card .verse {
-            font-size: 1.7rem;
-            font-weight: 500;
-            line-height: 1.4;
-            color: #f2eaff;
-            text-shadow: 0 0 20px rgba(180, 100, 255, 0.3);
-            letter-spacing: -0.2px;
-            padding: 0.2rem 0;
-        }
-
-        .lyric-card .verse i {
-            color: #b77aff;
-            margin: 0 0.4rem;
-            opacity: 0.7;
-        }
-
-        .verse-reveal-count {
-            margin-top: 0.8rem;
-            font-size: 0.8rem;
-            color: #a28ed0;
-            letter-spacing: 0.5px;
-        }
-
-        .search-section {
-            margin-bottom: 2rem;
-            position: relative;
-        }
-
-        .search-wrapper {
-            display: flex;
-            gap: 0.8rem;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .search-input-wrapper {
-            flex: 1;
-            position: relative;
-        }
-
-        #songInput {
-            width: 100%;
-            padding: 1rem 1.5rem;
-            border-radius: 60px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            background: rgba(10, 6, 24, 0.7);
-            backdrop-filter: blur(4px);
-            color: #f0edff;
-            font-size: 1rem;
-            font-weight: 500;
-            outline: none;
-            transition: all 0.25s ease;
-            box-shadow: 0 0 0 0px rgba(180, 0, 255, 0);
-        }
-
-        #songInput:focus {
-            border-color: #b44cff;
-            box-shadow: 0 0 25px rgba(180, 0, 255, 0.3), 0 0 0 2px rgba(180, 0, 255, 0.2);
-            background: rgba(14, 8, 34, 0.8);
-        }
-
-        #songInput::placeholder {
-            color: #6b5d8a;
-            font-weight: 400;
-        }
-
-        .btn-primary {
-            background: linear-gradient(145deg, #b44cff, #8b2fdb);
-            border: none;
-            padding: 1rem 2.2rem;
-            border-radius: 60px;
-            font-weight: 700;
-            font-size: 1rem;
-            color: white;
-            box-shadow: 0 0 25px rgba(150, 0, 255, 0.4);
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            font-family: 'Space Grotesk', sans-serif;
-        }
-
-        .btn-primary:hover {
-            transform: scale(1.02);
-            box-shadow: 0 0 40px #b44cffaa;
-        }
-
-        .btn-primary:active {
-            transform: scale(0.97);
-        }
-
-        .btn-primary:disabled {
-            opacity: 0.3;
-            pointer-events: none;
-        }
-
-        .autocomplete-list {
-            position: absolute;
-            top: calc(100% + 8px);
-            left: 0;
-            right: 0;
-            background: rgba(18, 12, 38, 0.95);
-            backdrop-filter: blur(16px);
-            border-radius: 1.8rem;
-            padding: 0.5rem 0;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
-            z-index: 30;
-            max-height: 200px;
-            overflow-y: auto;
-            display: none;
-        }
-
-        .autocomplete-list.active {
-            display: block;
-        }
-
-        .autocomplete-item {
-            padding: 0.7rem 1.8rem;
-            cursor: pointer;
-            transition: 0.1s ease;
-            display: flex;
-            justify-content: space-between;
-            color: #d4caff;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
-        }
-
-        .autocomplete-item:hover {
-            background: rgba(150, 70, 255, 0.2);
-            color: white;
-        }
-
-        .autocomplete-item .artist-name {
-            color: #a28ed0;
-            font-size: 0.85rem;
-        }
-
-        .comparison-table {
-            background: rgba(16, 10, 34, 0.5);
-            backdrop-filter: blur(8px);
-            border-radius: 2rem;
-            padding: 1.5rem;
-            margin: 1.8rem 0 1.2rem;
-            border: 1px solid rgba(255, 255, 255, 0.03);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
-            transition: all 0.4s ease;
-        }
-
-        .comparison-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.8rem 0.2rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-            font-size: 0.95rem;
-        }
-
-        .comparison-row:last-child {
-            border-bottom: none;
-        }
-
-        .cmp-label {
-            font-weight: 400;
-            color: #b7a8e0;
-            letter-spacing: 0.3px;
-        }
-
-        .cmp-value {
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .cmp-value .badge {
-            padding: 0.2rem 1rem;
-            border-radius: 40px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid transparent;
-        }
-
-        .badge.green {
-            background: #1f5f3f;
-            color: #9bffb0;
-            border-color: #34b86b;
-            box-shadow: 0 0 15px #1aff6e33;
-        }
-        .badge.yellow {
-            background: #5f4b1a;
-            color: #ffd966;
-            border-color: #d4a022;
-            box-shadow: 0 0 15px #ffbb3333;
-        }
-        .badge.red {
-            background: #4f1e2a;
-            color: #ff8a8a;
-            border-color: #d43f4f;
-            box-shadow: 0 0 15px #ff3b3b33;
-        }
-
-        .arrow-up { color: #7affb0; margin-left: 4px; }
-        .arrow-down { color: #ff7b9e; margin-left: 4px; }
-
-        .cmp-value i {
-            margin-right: 6px;
-            font-size: 0.9rem;
-        }
-
-        .feedback-message {
-            text-align: center;
-            font-weight: 600;
-            padding: 0.8rem 0;
-            font-size: 1.1rem;
-            min-height: 3.5rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-
-        .feedback-message.success {
-            color: #b4ffb4;
-            text-shadow: 0 0 20px #00ff88aa;
-        }
-
-        .feedback-message.error {
-            color: #ffb0b0;
-        }
-
-        .feedback-message.loading {
-            color: #b77aff;
-        }
-
-        .confetti-container {
-            position: fixed;
+        /* ===== MENU DE ABAS (TABS) ===== */
+        .tab-menu {
+            position: sticky;
             top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 999;
-            overflow: hidden;
+            z-index: 100;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.4rem 0.2rem;
+            padding: 0.8rem 1rem;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(6px);
+            border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
         }
 
-        .confetti {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            border-radius: 2px;
-            animation: confettiFall linear forwards;
-        }
-
-        @keyframes confettiFall {
-            0% { opacity: 1; transform: translateY(-20px) rotate(0deg) scale(1); }
-            100% { opacity: 0; transform: translateY(110vh) rotate(720deg) scale(0.2); }
-        }
-
-        .pulse-glow {
-            animation: audioPulse 0.8s ease 3;
-        }
-
-        @keyframes audioPulse {
-            0% { box-shadow: 0 0 0 0 #ff3b9e88, 0 0 0 0 #b44cff66; }
-            50% { box-shadow: 0 0 40px 10px #ff3b9eaa, 0 0 80px 30px #b44cff66; }
-            100% { box-shadow: 0 0 0 0 #ff3b9e88, 0 0 0 0 #b44cff66; }
-        }
-
-        .next-round-btn {
-            background: linear-gradient(145deg, #3bc9ff, #7b4cff);
-            border: none;
-            padding: 0.8rem 2rem;
-            border-radius: 60px;
-            font-weight: 700;
-            font-size: 1rem;
-            color: white;
-            box-shadow: 0 0 25px rgba(59, 201, 255, 0.3);
+        .tab-btn {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ddd;
+            padding: 0.5rem 1.1rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
             cursor: pointer;
             transition: all 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.6rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            font-family: 'Space Grotesk', sans-serif;
-            margin-top: 1rem;
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
         }
 
-        .next-round-btn:hover {
+        .tab-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: #ffd700;
             transform: scale(1.02);
-            box-shadow: 0 0 40px #3bc9ffaa;
         }
 
-        .loading-spinner {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            border-top-color: #b44cff;
-            animation: spin 1s ease-in-out infinite;
+        .tab-btn.active {
+            background: #ffd700;
+            color: #1a1a1a;
+            border-color: #ffd700;
+            box-shadow: 0 0 16px #ffd70088;
+            text-shadow: none;
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        /* ===== CONTEÚDO PRINCIPAL ===== */
+        .container {
+            flex: 1;
+            max-width: 1100px;
+            margin: 2rem auto;
+            padding: 1.5rem 2rem;
+            width: 100%;
+            transition: all 0.3s ease;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(2px);
+            border-radius: 32px 32px 16px 16px;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
         }
 
-        @media (max-width: 600px) {
-            .game-container { padding: 1.5rem; }
-            .header h1 { font-size: 1.7rem; }
-            .lyric-card .verse { font-size: 1.3rem; }
-            .btn-primary { padding: 0.8rem 1.8rem; }
-            .stats { padding: 0.3rem 1rem; gap: 0.8rem; }
-            .stat-item { font-size: 0.8rem; }
+        .part-content {
+            display: block;
+            animation: fadeIn 0.4s ease;
         }
 
-        .autocomplete-list::-webkit-scrollbar {
-            width: 4px;
-            background: transparent;
+        @keyframes fadeIn {
+            0% { opacity: 0.2; transform: translateY(10px); }
+            100% { opacity: 1; transform: translateY(0); }
         }
-        .autocomplete-list::-webkit-scrollbar-thumb {
-            background: #b44cff;
-            border-radius: 20px;
+
+        .part-title {
+            font-size: 2.6rem;
+            font-weight: 900;
+            margin-bottom: 0.5rem;
+            letter-spacing: 2px;
+            font-family: 'Impact', 'Arial Black', sans-serif;
+            text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.3);
+            border-left: 6px solid currentColor;
+            padding-left: 1rem;
+        }
+
+        .part-sub {
+            font-size: 1.1rem;
+            opacity: 0.85;
+            margin-bottom: 1.8rem;
+            font-style: italic;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.15);
+            padding-bottom: 0.6rem;
+        }
+
+        .part-text p {
+            margin-bottom: 1.2rem;
+            font-size: 1.1rem;
+            background: rgba(0, 0, 0, 0.25);
+            padding: 0.8rem 1.2rem;
+            border-radius: 16px;
+            backdrop-filter: blur(2px);
+        }
+
+        .part-text p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* ===== TEMAS (variáveis CSS por parte) ===== */
+        /* A classe 'theme-pX' é aplicada ao body via JS */
+
+        /* Tema padrão (fallback) */
+        body {
+            --bg-start: #1a1a1a;
+            --bg-end: #2a2a2a;
+            --text-color: #eee;
+            --accent: #ffd700;
+            --card-bg: rgba(0,0,0,0.4);
+            --border-glow: #ffd70044;
+        }
+
+        /* Parte 1: Phantom Blood - Gótico Vitoriano */
+        body.theme-p1 {
+            --bg-start: #1e0a0a;
+            --bg-end: #2b1010;
+            --text-color: #f0d5c5;
+            --accent: #c99b3b;
+            --card-bg: rgba(40, 10, 10, 0.7);
+            --border-glow: #8b2a2a88;
+            background: radial-gradient(circle at 20% 30%, #3a1515, #1a0707);
+        }
+        body.theme-p1 .tab-btn.active {
+            background: #c99b3b;
+            border-color: #d4af37;
+            color: #1a0a0a;
+        }
+
+        /* Parte 2: Battle Tendency - Anos 30 / Asteca */
+        body.theme-p2 {
+            --bg-start: #281a3a;
+            --bg-end: #1f0f2f;
+            --text-color: #e4f0b0;
+            --accent: #b3ff00;
+            --card-bg: rgba(40, 20, 60, 0.7);
+            --border-glow: #b3ff0088;
+            background: radial-gradient(circle at 70% 20%, #4a2a6a, #1e1030);
+        }
+        body.theme-p2 .tab-btn.active {
+            background: #b3ff00;
+            border-color: #ccff44;
+            color: #1a0a2a;
+        }
+
+        /* Parte 3: Stardust Crusaders - Deserto / Tarô */
+        body.theme-p3 {
+            --bg-start: #3a2810;
+            --bg-end: #1e1a30;
+            --text-color: #f5e6c4;
+            --accent: #f0a030;
+            --card-bg: rgba(40, 30, 10, 0.7);
+            --border-glow: #f0a03088;
+            background: radial-gradient(circle at 80% 40%, #6a4a20, #1c1830);
+        }
+        body.theme-p3 .tab-btn.active {
+            background: #f0a030;
+            border-color: #ffb347;
+            color: #1a140a;
+        }
+
+        /* Parte 4: Diamond is Unbreakable - Pop Art 90's */
+        body.theme-p4 {
+            --bg-start: #ffe066;
+            --bg-end: #c99bff;
+            --text-color: #1f1a2a;
+            --accent: #ff4d94;
+            --card-bg: rgba(255, 255, 220, 0.7);
+            --border-glow: #ff4d9488;
+            background: radial-gradient(circle at 30% 60%, #ffdd99, #cc88ff);
+        }
+        body.theme-p4 .tab-btn {
+            color: #1a1a2a;
+        }
+        body.theme-p4 .tab-btn.active {
+            background: #ff4d94;
+            border-color: #ff66aa;
+            color: #1a0a1a;
+        }
+        body.theme-p4 .part-text p {
+            background: rgba(255, 255, 200, 0.6);
+            color: #1a1a2a;
+        }
+
+        /* Parte 5: Golden Wind - Máfia / Renascença */
+        body.theme-p5 {
+            --bg-start: #1a0a0a;
+            --bg-end: #2a1018;
+            --text-color: #f5e0c0;
+            --accent: #d4af37;
+            --card-bg: rgba(60, 10, 20, 0.7);
+            --border-glow: #d4af3788;
+            background: radial-gradient(circle at 50% 20%, #5a1a2a, #1a0a0a);
+        }
+        body.theme-p5 .tab-btn.active {
+            background: #d4af37;
+            border-color: #f0c040;
+            color: #1a0a0a;
+        }
+
+        /* Parte 6: Stone Ocean - Prisão / Punk */
+        body.theme-p6 {
+            --bg-start: #1a2a1a;
+            --bg-end: #0a1a2a;
+            --text-color: #b0f0d0;
+            --accent: #00e6b0;
+            --card-bg: rgba(10, 40, 30, 0.7);
+            --border-glow: #00e6b088;
+            background: radial-gradient(circle at 20% 80%, #2a5a3a, #0a1a2a);
+        }
+        body.theme-p6 .tab-btn.active {
+            background: #00e6b0;
+            border-color: #44ffcc;
+            color: #0a1a1a;
+        }
+
+        /* Parte 7: Steel Ball Run - Velho Oeste / Steampunk */
+        body.theme-p7 {
+            --bg-start: #3a2a1a;
+            --bg-end: #2a1a0a;
+            --text-color: #f0e0c0;
+            --accent: #b8966a;
+            --card-bg: rgba(50, 30, 10, 0.7);
+            --border-glow: #b8966a88;
+            background: radial-gradient(circle at 60% 40%, #5a4020, #1a1008);
+        }
+        body.theme-p7 .tab-btn.active {
+            background: #b8966a;
+            border-color: #d4b08a;
+            color: #1a1008;
+        }
+
+        /* Parte 8: JoJolion - Náutico / Mistério */
+        body.theme-p8 {
+            --bg-start: #0a2a3a;
+            --bg-end: #1a1a3a;
+            --text-color: #d0e8f0;
+            --accent: #5aa0c0;
+            --card-bg: rgba(10, 40, 60, 0.7);
+            --border-glow: #5aa0c088;
+            background: radial-gradient(circle at 30% 30%, #1a4a6a, #0a1a2a);
+        }
+        body.theme-p8 .tab-btn.active {
+            background: #5aa0c0;
+            border-color: #7ac0e0;
+            color: #0a1a2a;
+        }
+
+        /* Parte 9: The JOJOLands - Tropical / Havaí */
+        body.theme-p9 {
+            --bg-start: #1a3a1a;
+            --bg-end: #0a2a1a;
+            --text-color: #e0f0c0;
+            --accent: #2ecc71;
+            --card-bg: rgba(10, 50, 20, 0.7);
+            --border-glow: #2ecc7188;
+            background: radial-gradient(circle at 80% 10%, #2a6a2a, #0a2a1a);
+        }
+        body.theme-p9 .tab-btn.active {
+            background: #2ecc71;
+            border-color: #5ae09a;
+            color: #0a1a0a;
+        }
+
+        /* Ajustes de legibilidade para todos os temas */
+        body {
+            color: var(--text-color);
+            background: var(--bg-start);
+        }
+
+        .container {
+            background: var(--card-bg);
+            border-left: 2px solid var(--accent);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 0 1px var(--border-glow);
+        }
+
+        .part-title {
+            color: var(--accent);
+            border-left-color: var(--accent);
+        }
+
+        .tab-btn {
+            color: var(--text-color);
+            border-color: var(--border-glow);
+        }
+
+        .tab-btn.active {
+            background: var(--accent);
+            color: #1a1a1a;
+        }
+
+        /* ===== RESPONSIVIDADE ===== */
+        @media (max-width: 700px) {
+            .tab-menu {
+                gap: 0.3rem;
+                padding: 0.6rem 0.5rem;
+            }
+            .tab-btn {
+                font-size: 0.75rem;
+                padding: 0.3rem 0.8rem;
+            }
+            .container {
+                padding: 1rem 1rem;
+                margin: 1rem;
+                border-radius: 20px;
+            }
+            .part-title {
+                font-size: 2rem;
+            }
+            .part-text p {
+                font-size: 1rem;
+                padding: 0.6rem 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .tab-btn {
+                font-size: 0.7rem;
+                padding: 0.25rem 0.6rem;
+            }
+            .part-title {
+                font-size: 1.6rem;
+            }
+        }
+
+        /* Elementos decorativos sutis (padrões) */
+        body.theme-p4 .container::after {
+            content: "♥ ✌ ☮";
+            display: block;
+            text-align: right;
+            font-size: 2rem;
+            opacity: 0.15;
+            margin-top: 0.5rem;
+            letter-spacing: 10px;
+        }
+
+        body.theme-p7 .container::before {
+            content: "✦ ✧ ★ ✧ ✦";
+            display: block;
+            text-align: center;
+            font-size: 1.8rem;
+            opacity: 0.15;
+            letter-spacing: 12px;
+            margin-bottom: 0.5rem;
+        }
+
+        body.theme-p6 .container::after {
+            content: "🕷️ 🦋";
+            font-size: 2.4rem;
+            opacity: 0.2;
+            display: block;
+            text-align: right;
+        }
+
+        body.theme-p8 .container::after {
+            content: "⛵ ⚓ 🪼";
+            font-size: 2rem;
+            opacity: 0.2;
+            display: block;
+            text-align: right;
+        }
+
+        body.theme-p9 .container::after {
+            content: "🌴 🏝️ 💰";
+            font-size: 2.2rem;
+            opacity: 0.2;
+            display: block;
+            text-align: right;
+        }
+
+        body.theme-p3 .container::after {
+            content: "🃏 ★ ☆";
+            font-size: 2rem;
+            opacity: 0.2;
+            display: block;
+            text-align: right;
         }
     </style>
 </head>
-<body>
-    <div class="game-container" id="gameContainer">
-        <div class="header">
-            <div>
-                <h1><i class="fas fa-headphones-alt"></i> Liricle</h1>
-                <div class="header-subtitle">Adivinhe a música pela letra</div>
-            </div>
-            <div class="stats">
-                <div class="stat-item">
-                    <i class="fas fa-trophy"></i>
-                    <span>Score: </span>
-                    <span class="value" id="scoreDisplay">0</span>
-                </div>
-                <div class="stat-item">
-                    <i class="fas fa-gamepad"></i>
-                    <span>Rodada: </span>
-                    <span class="value" id="roundDisplay">1</span>
-                </div>
-            </div>
-        </div>
+<body class="theme-p1">
+    <!-- MENU DE ABAS -->
+    <nav class="tab-menu" id="tabMenu">
+        <button class="tab-btn active" data-part="1">Parte 1</button>
+        <button class="tab-btn" data-part="2">Parte 2</button>
+        <button class="tab-btn" data-part="3">Parte 3</button>
+        <button class="tab-btn" data-part="4">Parte 4</button>
+        <button class="tab-btn" data-part="5">Parte 5</button>
+        <button class="tab-btn" data-part="6">Parte 6</button>
+        <button class="tab-btn" data-part="7">Parte 7</button>
+        <button class="tab-btn" data-part="8">Parte 8</button>
+        <button class="tab-btn" data-part="9">Parte 9</button>
+    </nav>
 
-        <div style="display: flex; justify-content: center; margin-bottom: 1.5rem;">
-            <div class="mode-selector">
-                <button class="mode-btn active" data-mode="daily" id="dailyModeBtn">
-                    <i class="fas fa-calendar-day"></i> Diario
-                </button>
-                <button class="mode-btn" data-mode="infinite" id="infiniteModeBtn">
-                    <i class="fas fa-infinity"></i> Infinito
-                </button>
-            </div>
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="container" id="mainContainer">
+        <div id="partDisplay" class="part-content">
+            <!-- Injetado via JS -->
         </div>
-
-        <div class="lyric-card" id="lyricCard">
-            <div class="verse" id="verseDisplay">
-                <i class="fas fa-quote-left"></i> Carregando letra... <i class="fas fa-quote-right"></i>
-            </div>
-            <div class="verse-reveal-count" id="verseCount">verso 1 de ?</div>
-        </div>
-
-        <div class="search-section">
-            <div class="search-wrapper">
-                <div class="search-input-wrapper">
-                    <input type="text" id="songInput" placeholder="Digite o nome da música ou artista..." autocomplete="off">
-                    <div class="autocomplete-list" id="autocompleteList"></div>
-                </div>
-                <button class="btn-primary" id="guessBtn"><i class="fas fa-guitar"></i> Palpitar</button>
-            </div>
-        </div>
-
-        <div class="comparison-table" id="comparisonTable">
-            <div class="comparison-row"><span class="cmp-label"> Artista</span><span class="cmp-value" id="cmpArtist">---</span></div>
-            <div class="comparison-row"><span class="cmp-label"> Genero</span><span class="cmp-value" id="cmpGenre">---</span></div>
-            <div class="comparison-row"><span class="cmp-label"> Decada</span><span class="cmp-value" id="cmpDecade">---</span></div>
-            <div class="comparison-row"><span class="cmp-label"> Nacionalidade</span><span class="cmp-value" id="cmpNationality">---</span></div>
-            <div class="comparison-row"><span class="cmp-label"> Popularidade</span><span class="cmp-value" id="cmpPopularity">---</span></div>
-        </div>
-
-        <div class="feedback-message" id="feedbackMessage">
-            <i class="fas fa-info-circle"></i> Adivinhe a música pela letra!
-        </div>
-
-        <div style="text-align: center; display: none;" id="nextRoundContainer">
-            <button class="next-round-btn" id="nextRoundBtn">
-                <i class="fas fa-forward"></i> Proxima Rodada
-            </button>
-        </div>
-    </div>
+    </main>
 
     <script>
-        // ============================================================
-        // BANCO DE DADOS COM 40 MUSICAS E SUAS LETRAS
-        // ============================================================
-        var MUSIC_DB = [
-            // Rock Clássico
-            {
-                id: 1,
-                title: "Bohemian Rhapsody",
-                artist: "Queen",
-                genre: "Rock",
-                year: 1975,
-                nationality: "Britanica",
-                popularity: 980,
-                lyrics: [
-                    "Is this the real life? Is this just fantasy?",
-                    "Caught in a landslide, no escape from reality",
-                    "Mama, just killed a man, put a gun against his head",
-                    "Mama, life had just begun, but now I've gone and thrown it all away"
-                ]
-            },
-            {
-                id: 2,
-                title: "Stairway to Heaven",
-                artist: "Led Zeppelin",
-                genre: "Rock",
-                year: 1971,
-                nationality: "Britanica",
-                popularity: 950,
-                lyrics: [
-                    "There's a lady who's sure all that glitters is gold",
-                    "And she's buying a stairway to heaven",
-                    "When she gets there she knows, if the stores are all closed",
-                    "With a word she can get what she came for"
-                ]
-            },
-            {
-                id: 3,
-                title: "Hotel California",
-                artist: "Eagles",
-                genre: "Rock",
-                year: 1977,
-                nationality: "Americana",
-                popularity: 940,
-                lyrics: [
-                    "On a dark desert highway, cool wind in my hair",
-                    "Warm smell of colitas, rising up through the air",
-                    "Up ahead in the distance, I saw a shimmering light",
-                    "My head grew heavy and my sight grew dim"
-                ]
-            },
-            {
-                id: 4,
-                title: "Smells Like Teen Spirit",
-                artist: "Nirvana",
-                genre: "Rock",
-                year: 1991,
-                nationality: "Americana",
-                popularity: 960,
-                lyrics: [
-                    "Load up on guns, bring your friends",
-                    "It's fun to lose and to pretend",
-                    "She's over bored and self-assured",
-                    "Oh no, I know a dirty word"
-                ]
-            },
-            {
-                id: 5,
-                title: "Wonderwall",
-                artist: "Oasis",
-                genre: "Rock",
-                year: 1995,
-                nationality: "Britanica",
-                popularity: 930,
-                lyrics: [
-                    "Today is gonna be the day that they're gonna throw it back to you",
-                    "By now you should've somehow realized what you gotta do",
-                    "I don't believe that anybody feels the way I do about you now",
-                    "Backbeat, the word is on the street that the fire in your heart is out"
-                ]
-            },
-            // Pop
-            {
-                id: 6,
-                title: "Billie Jean",
-                artist: "Michael Jackson",
-                genre: "Pop",
-                year: 1982,
-                nationality: "Americana",
-                popularity: 920,
-                lyrics: [
-                    "She was more like a beauty queen from a movie scene",
-                    "I said don't mind, but what do you mean I am the one",
-                    "Who will dance on the floor in the round",
-                    "Billie Jean is not my lover"
-                ]
-            },
-            {
-                id: 7,
-                title: "Shape of You",
-                artist: "Ed Sheeran",
-                genre: "Pop",
-                year: 2017,
-                nationality: "Britanica",
-                popularity: 970,
-                lyrics: [
-                    "The club isn't the best place to find a lover",
-                    "So the bar is where I go",
-                    "Me and my friends at the table doing shots",
-                    "Drinking fast and then we talk slow"
-                ]
-            },
-            {
-                id: 8,
-                title: "Bad Guy",
-                artist: "Billie Eilish",
-                genre: "Pop",
-                year: 2019,
-                nationality: "Americana",
-                popularity: 960,
-                lyrics: [
-                    "White shirt now red, my bloody nose",
-                    "Sleeping, you're on your tippy toes",
-                    "Creeping around like no one knows",
-                    "Think you're so criminal"
-                ]
-            },
-            {
-                id: 9,
-                title: "Blinding Lights",
-                artist: "The Weeknd",
-                genre: "Pop",
-                year: 2020,
-                nationality: "Canadense",
-                popularity: 990,
-                lyrics: [
-                    "I've been tryna call",
-                    "I've been on my own for long enough",
-                    "Maybe you can show me how to love, maybe",
-                    "I'm blinded by the lights"
-                ]
-            },
-            {
-                id: 10,
-                title: "Shallow",
-                artist: "Lady Gaga",
-                genre: "Pop",
-                year: 2018,
-                nationality: "Americana",
-                popularity: 950,
-                lyrics: [
-                    "Tell me something, girl",
-                    "Are you happy in this modern world?",
-                    "Or do you need more? Is there something else you're searching for?",
-                    "I'm falling, in all the good times I find myself longing for change"
-                ]
-            },
-            // MPB / Brasileira
-            {
-                id: 11,
-                title: "Tempo Perdido",
-                artist: "Legiao Urbana",
-                genre: "MPB",
-                year: 1986,
-                nationality: "Brasileira",
-                popularity: 750,
-                lyrics: [
-                    "Todos os dias quando acordo, nao tenho mais o tempo que passou",
-                    "Mas tenho muito tempo, temos todo o tempo do mundo",
-                    "Somos tao jovens, somos tao jovens",
-                    "E o tempo passa, a vida passa"
-                ]
-            },
-            {
-                id: 12,
-                title: "Garota de Ipanema",
-                artist: "Tom Jobim",
-                genre: "Bossa Nova",
-                year: 1962,
-                nationality: "Brasileira",
-                popularity: 700,
-                lyrics: [
-                    "Olha que coisa mais linda, mais cheia de graca",
-                    "E ela a menina que vem e que passa",
-                    "Num doce balanco, caminho do mar",
-                    "Moça do corpo dourado, do sol de Ipanema"
-                ]
-            },
-            {
-                id: 13,
-                title: "O Tempo nao Para",
-                artist: "Cazuza",
-                genre: "MPB",
-                year: 1988,
-                nationality: "Brasileira",
-                popularity: 680,
-                lyrics: [
-                    "O tempo nao para, o tempo nao para",
-                    "Nao adianta tentar, nao adianta tentar",
-                    "Viver e nao ter a vergonha de ser feliz",
-                    "Cantar e cantar e cantar"
-                ]
-            },
-            {
-                id: 14,
-                title: "Alegria, Alegria",
-                artist: "Caetano Veloso",
-                genre: "MPB",
-                year: 1968,
-                nationality: "Brasileira",
-                popularity: 660,
-                lyrics: [
-                    "Caminhando contra o vento",
-                    "Sem lenco e sem documento",
-                    "No sol de quase dezembro",
-                    "Eu vou, eu vou"
-                ]
-            },
-            {
-                id: 15,
-                title: "Como Nossos Pais",
-                artist: "Elis Regina",
-                genre: "MPB",
-                year: 1976,
-                nationality: "Brasileira",
-                popularity: 690,
-                lyrics: [
-                    "E por falar em beleza, nao se pode esquecer",
-                    "A musica e a alegria do meu pais",
-                    "E por falar em amor, a beleza e o amor",
-                    "E por falar em paz, a paz e o amor"
-                ]
-            },
-            // Rock Nacional
-            {
-                id: 16,
-                title: "Ouro de Tolo",
-                artist: "Raul Seixas",
-                genre: "Rock",
-                year: 1973,
-                nationality: "Brasileira",
-                popularity: 720,
-                lyrics: [
-                    "Eu nao, eu nao, eu nao sou como voce",
-                    "Nao, nao, nao, nao, nao, nao",
-                    "Eu nao, eu nao, eu nao sou como voce",
-                    "Nao, nao, nao, nao, nao, nao"
-                ]
-            },
-            {
-                id: 17,
-                title: "Pro Dia Nascer Feliz",
-                artist: "Cidade Negra",
-                genre: "Reggae",
-                year: 1994,
-                nationality: "Brasileira",
-                popularity: 640,
-                lyrics: [
-                    "E o que eu quero e o que eu sempre quis",
-                    "E o que eu sempre quis, e o que eu sempre quis",
-                    "E o que eu quero e o que eu sempre quis",
-                    "E o que eu sempre quis, e o que eu sempre quis"
-                ]
-            },
-            {
-                id: 18,
-                title: "Farol das Estrelas",
-                artist: "Champignon",
-                genre: "Rock",
-                year: 2003,
-                nationality: "Brasileira",
-                popularity: 610,
-                lyrics: [
-                    "Quando o sol se for, a lua vai brilhar",
-                    "E a noite vai chegar, eu vou te esperar",
-                    "Quando o sol se for, a lua vai brilhar",
-                    "E a noite vai chegar, eu vou te esperar"
-                ]
-            },
-            // Hip Hop / Rap
-            {
-                id: 19,
-                title: "Lose Yourself",
-                artist: "Eminem",
-                genre: "Rap",
-                year: 2002,
-                nationality: "Americana",
-                popularity: 970,
-                lyrics: [
-                    "His palms are sweaty, knees weak, arms are heavy",
-                    "There's vomit on his sweater already, mom's spaghetti",
-                    "He's nervous, but on the surface he looks calm and ready",
-                    "To drop bombs, but he keeps on forgetting"
-                ]
-            },
-            {
-                id: 20,
-                title: "God's Plan",
-                artist: "Drake",
-                genre: "Rap",
-                year: 2018,
-                nationality: "Canadense",
-                popularity: 960,
-                lyrics: [
-                    "And they wishin' and wishin' and wishin' and wishin'",
-                    "They wishin' on me, yeah",
-                    "I been movin' calm, don't start no trouble with me",
-                    "Tryna keep it peaceful is a struggle for me"
-                ]
-            },
-            {
-                id: 21,
-                title: "Sicko Mode",
-                artist: "Travis Scott",
-                genre: "Rap",
-                year: 2018,
-                nationality: "Americana",
-                popularity: 980,
-                lyrics: [
-                    "Astro, yeah, sun is down, freezin' cold",
-                    "But the heat is on, yeah",
-                    "From the 6, yeah, we gon' get it on, yeah",
-                    "Sicko mode, sicko mode"
-                ]
-            },
-            // Eletronica / Dance
-            {
-                id: 22,
-                title: "Strobe",
-                artist: "Deadmau5",
-                genre: "Eletronica",
-                year: 2009,
-                nationality: "Canadense",
-                popularity: 820,
-                lyrics: [
-                    "(Instrumental)",
-                    "No lyrics, just pure electronic music",
-                    "Feeling the rhythm, the beat goes on",
-                    "Dancing through the night"
-                ]
-            },
-            {
-                id: 23,
-                title: "Titanium",
-                artist: "David Guetta",
-                genre: "Eletronica",
-                year: 2011,
-                nationality: "Francesa",
-                popularity: 910,
-                lyrics: [
-                    "You shout it out, but I can't hear a word you say",
-                    "I'm talking loud, not saying much",
-                    "I'm criticized, but all your bullets ricochet",
-                    "You shoot me down, but I get up"
-                ]
-            },
-            {
-                id: 24,
-                title: "Animals",
-                artist: "Martin Garrix",
-                genre: "Eletronica",
-                year: 2013,
-                nationality: "Holandesa",
-                popularity: 890,
-                lyrics: [
-                    "We're the animals, animals",
-                    "We're the animals, animals",
-                    "We're the animals, animals",
-                    "We're the animals"
-                ]
-            },
-            // Indie / Alternativo
-            {
-                id: 25,
-                title: "Do I Wanna Know?",
-                artist: "Arctic Monkeys",
-                genre: "Indie Rock",
-                year: 2013,
-                nationality: "Britanica",
-                popularity: 930,
-                lyrics: [
-                    "Have you got color in your cheeks?",
-                    "Do you ever get that fear that you can't shift the tide?",
-                    "That sticks around like something in your teeth?",
-                    "Are there some aces up your sleeve?"
-                ]
-            },
-            {
-                id: 26,
-                title: "Skinny Love",
-                artist: "Bon Iver",
-                genre: "Indie Folk",
-                year: 2007,
-                nationality: "Americana",
-                popularity: 890,
-                lyrics: [
-                    "Come on skinny love, just last the year",
-                    "Pour a little salt, we were never here",
-                    "My, my, my, my, my, my, my, my",
-                    "Staring at the sink of blood and crushed veneer"
-                ]
-            },
-            {
-                id: 27,
-                title: "Electric Feel",
-                artist: "MGMT",
-                genre: "Indie Rock",
-                year: 2007,
-                nationality: "Americana",
-                popularity: 880,
-                lyrics: [
-                    "I said ooh girl, shock me like an electric eel",
-                    "Baby girl, turn me on with your electric feel",
-                    "I said ooh girl, shock me like an electric eel",
-                    "Baby girl, turn me on with your electric feel"
-                ]
-            },
-            // Jazz / Blues
-            {
-                id: 28,
-                title: "Feeling Good",
-                artist: "Nina Simone",
-                genre: "Jazz",
-                year: 1965,
-                nationality: "Americana",
-                popularity: 850,
-                lyrics: [
-                    "Birds flying high, you know how I feel",
-                    "Sun in the sky, you know how I feel",
-                    "Breeze driftin' on by, you know how I feel",
-                    "It's a new dawn, it's a new day, it's a new life for me"
-                ]
-            },
-            {
-                id: 29,
-                title: "Take Five",
-                artist: "Dave Brubeck",
-                genre: "Jazz",
-                year: 1959,
-                nationality: "Americana",
-                popularity: 780,
-                lyrics: [
-                    "(Instrumental)",
-                    "Smooth jazz, the perfect groove",
-                    "Five four time signature, it's unique",
-                    "A masterpiece of jazz music"
-                ]
-            },
-            // Clássica / Instrumental
-            {
-                id: 30,
-                title: "Clair de Lune",
-                artist: "Debussy",
-                genre: "Classica",
-                year: 1905,
-                nationality: "Francesa",
-                popularity: 720,
-                lyrics: [
-                    "(Instrumental)",
-                    "Beautiful piano melody",
-                    "Moonlight sonata feeling",
-                    "A timeless classical piece"
-                ]
-            },
-            // Mais Pop
-            {
-                id: 31,
-                title: "Dancing Queen",
-                artist: "ABBA",
-                genre: "Pop",
-                year: 1976,
-                nationality: "Sueca",
-                popularity: 940,
-                lyrics: [
-                    "You can dance, you can jive, having the time of your life",
-                    "See that girl, watch that scene, digging the dancing queen",
-                    "Friday night and the lights are low",
-                    "Looking out for the place to go"
-                ]
-            },
-            {
-                id: 32,
-                title: "I Will Survive",
-                artist: "Gloria Gaynor",
-                genre: "Pop",
-                year: 1978,
-                nationality: "Americana",
-                popularity: 930,
-                lyrics: [
-                    "At first I was afraid, I was petrified",
-                    "Kept thinking I could never live without you by my side",
-                    "But then I spent so many nights thinking how you did me wrong",
-                    "And I grew strong, and I learned how to get along"
-                ]
-            },
-            // Mais Rock
-            {
-                id: 33,
-                title: "Back in Black",
-                artist: "AC/DC",
-                genre: "Rock",
-                year: 1980,
-                nationality: "Australiana",
-                popularity: 960,
-                lyrics: [
-                    "Back in black, I hit the sack",
-                    "I've been too long, I'm glad to be back",
-                    "Yes, I'm let loose from the noose",
-                    "That's kept me hanging about"
-                ]
-            },
-            {
-                id: 34,
-                title: "Seven Nation Army",
-                artist: "The White Stripes",
-                genre: "Rock",
-                year: 2003,
-                nationality: "Americana",
-                popularity: 950,
-                lyrics: [
-                    "I'm gonna fight 'em off",
-                    "A seven nation army couldn't hold me back",
-                    "They're gonna rip it off",
-                    "Taking their time right behind my back"
-                ]
-            },
-            // Mais MPB
-            {
-                id: 35,
-                title: "Construcao",
-                artist: "Chico Buarque",
-                genre: "MPB",
-                year: 1971,
-                nationality: "Brasileira",
-                popularity: 740,
-                lyrics: [
-                    "Amou daquela vez como se fosse a ultima",
-                    "Beijou sua mulher como se fosse a ultima",
-                    "E cada filho seu como se fosse o unico",
-                    "E atravessou a rua com seu passo timido"
-                ]
-            },
-            {
-                id: 36,
-                title: "O Bêbado e a Equilibrista",
-                artist: "Joao Bosco",
-                genre: "MPB",
-                year: 1979,
-                nationality: "Brasileira",
-                popularity: 720,
-                lyrics: [
-                    "O bêbado e a equilibrista",
-                    "Se abraçam no ar",
-                    "A vida e uma festa",
-                    "A vida e um carnaval"
-                ]
-            },
-            // Mais Eletronica
-            {
-                id: 37,
-                title: "Levels",
-                artist: "Avicii",
-                genre: "Eletronica",
-                year: 2011,
-                nationality: "Sueca",
-                popularity: 970,
-                lyrics: [
-                    "Oh, sometimes I get a good feeling, yeah",
-                    "Get a feeling that I never, never, never, never had before, no no",
-                    "I get a good feeling, yeah",
-                    "Oh, sometimes I get a good feeling, yeah"
-                ]
-            },
-            {
-                id: 38,
-                title: "Wake Me Up",
-                artist: "Avicii",
-                genre: "Eletronica",
-                year: 2013,
-                nationality: "Sueca",
-                popularity: 980,
-                lyrics: [
-                    "Feeling my way through the darkness",
-                    "Guided by a beating heart",
-                    "I can't tell where the journey will end",
-                    "But I know where to start"
-                ]
-            },
-            // Mais Indie
-            {
-                id: 39,
-                title: "Fluorescent Adolescent",
-                artist: "Arctic Monkeys",
-                genre: "Indie Rock",
-                year: 2007,
-                nationality: "Britanica",
-                popularity: 900,
-                lyrics: [
-                    "You used to get it in your fishnets",
-                    "Now you only get it in your night dress",
-                    "Discarded all the naughty nights for niceness",
-                    "Landed in a very common crisis"
-                ]
-            },
-            {
-                id: 40,
-                title: "R U Mine?",
-                artist: "Arctic Monkeys",
-                genre: "Indie Rock",
-                year: 2012,
-                nationality: "Britanica",
-                popularity: 920,
-                lyrics: [
-                    "I'm a puppet on a string",
-                    "Tracy Island, time-traveling diamond",
-                    "Coulda been a contender, coulda been a somebody",
-                    "R U mine?"
-                ]
-            }
-        ];
+        (function() {
+            // ===== DADOS DAS PARTES (resumos) =====
+            const partesData = {
+                1: {
+                    titulo: "Parte 1: Phantom Blood",
+                    subtitulo: "A origem da máscara de pedra e o sangue de um cavalheiro.",
+                    texto: `<p><strong>Protagonista:</strong> Jonathan Joestar. <strong>Vilão:</strong> Dio Brando.</p>
+                            <p>No século XIX, a rivalidade entre Jonathan Joestar e seu irmão adotivo, Dio Brando, desencadeia uma guerra sobrenatural. Quando Dio descobre a Máscara de Pedra, que o transforma em um vampiro imortal, Jonathan deve dominar a energia Hamon (Ondas) para detê-lo. Uma história de honra, sacrifício e o início da linhagem Joestar.</p>
+                            <p><em>Conceito central:</em> Hamon, a energia da respiração, utilizada para combater vampiros e criaturas das trevas.</p>`
+                },
+                2: {
+                    titulo: "Parte 2: Battle Tendency",
+                    subtitulo: "Aventura nos anos 30 e o despertar dos Deuses Astecas.",
+                    texto: `<p><strong>Protagonista:</strong> Joseph Joestar. <strong>Vilão:</strong> Kars (e os Pillar Men).</p>
+                            <p>Joseph Joestar, neto de Jonathan, enfrenta uma ameaça maior que os vampiros: os Homens do Pilar, seres imortais criados pela Máscara de Pedra. Com astúcia e seu Hamon improvisado, Joseph viaja pela Europa e América do Sul para deter Kars, que busca se tornar o ser supremo.</p>
+                            <p><em>Conceito central:</em> Hamon evoluído, combinado com estratégias engenhosas e a introdução do "Spin" (Rotações) em menor escala.</p>`
+                },
+                3: {
+                    titulo: "Parte 3: Stardust Crusaders",
+                    subtitulo: "Uma jornada ao Egito sob o signo do Tarô.",
+                    texto: `<p><strong>Protagonista:</strong> Jotaro Kujo. <strong>Vilão:</strong> DIO (o mesmo Dio, agora com um Stand).</p>
+                            <p>Anos depois, a maldição de DIO retorna. Jotaro Kujo e seus aliados — todos portadores de Stands, manifestações físicas do espírito — partem do Japão ao Egito para derrotar DIO de uma vez por todas. Cada Stand tem um nome de carta de Tarô ou divindade egípcia.</p>
+                            <p><em>Conceito central:</em> Stands — poderes psíquicos materializados com habilidades únicas. A viagem é uma batalha contra o tempo e o destino.</p>`
+                },
+                4: {
+                    titulo: "Parte 4: Diamond is Unbreakable",
+                    subtitulo: "Mistério e cotidiano na cidade de Morioh, anos 90.",
+                    texto: `<p><strong>Protagonista:</strong> Josuke Higashikata. <strong>Vilão:</strong> Yoshikage Kira.</p>
+                            <p>Em Morioh, uma cidade pacata, Stands surgem entre os habitantes. Josuke, filho ilegítimo de Joseph, une forças com outros usuários para proteger a cidade de um assassino em série que deseja apenas uma vida tranquila — e que possui um Stand capaz de apagar a existência de suas vítimas.</p>
+                            <p><em>Conceito central:</em> Stands com habilidades criativas, mistério de assassinato e a estética Pop Art dos anos 90. Símbolos da paz e corações permeiam o design.</p>`
+                },
+                5: {
+                    titulo: "Parte 5: Golden Wind",
+                    subtitulo: "Máfia italiana e o sonho de um novo amanhecer.",
+                    texto: `<p><strong>Protagonista:</strong> Giorno Giovanna. <strong>Vilão:</strong> Diavolo (o chefe da Passione).</p>
+                            <p>Giorno, filho de Dio, almeja se tornar um "Gang-Star" e reformar a máfia italiana por dentro. Ao lado de Bruno Bucciarati e sua equipe, ele enfrenta traições, batalhas de Stand implacáveis e o misterioso Diavolo, cujo Stand, King Crimson, pode pular o tempo.</p>
+                            <p><em>Conceito central:</em> Stands com temas de máfia e renascença. O "Golden Wind" representa o destino e a resolução dourada.</p>`
+                },
+                6: {
+                    titulo: "Parte 6: Stone Ocean",
+                    subtitulo: "Prisão, punks e o fim do universo.",
+                    texto: `<p><strong>Protagonista:</strong> Jolyne Cujoh. <strong>Vilão:</strong> Enrico Pucci.</p>
+                            <p>Jolyne, filha de Jotaro, é presa injustamente e descobre que um sacerdote chamado Pucci está manipulando os eventos para alcançar o "Céu". Dentro da prisão de segurança máxima, Jolyne e suas aliadas lutam com Stands únicos contra um plano que pode reiniciar o universo.</p>
+                            <p><em>Conceito central:</em> Stands e o plano de Pucci envolvendo a "Gravidade" e o "Céu". Estética punk, teias e borboletas simbolizam a transformação.</p>`
+                },
+                7: {
+                    titulo: "Parte 7: Steel Ball Run",
+                    subtitulo: "A corrida pelo oeste, entre steampunk e renascença.",
+                    texto: `<p><strong>Protagonista:</strong> Johnny Joestar. <strong>Vilão:</strong> Funny Valentine (e o Stand D4C).</p>
+                            <p>Em uma versão alternativa do século XIX, uma corrida a cavalo de San Diego a Nova York reúne competidores de todo o mundo. Johnny, um paraplégico, busca o poder do "Spin" para recuperar seus movimentos, enquanto o presidente Valentine busca o poder do Santo Coração para manipular as dimensões.</p>
+                            <p><em>Conceito central:</em> Spin (Rotações) e Stands. Temas do Velho Oeste, steampunk e a busca por uma "segunda chance".</p>`
+                },
+                8: {
+                    titulo: "Parte 8: JoJolion",
+                    subtitulo: "Mistério na cidade costeira de Morioh, após o tsunami.",
+                    texto: `<p><strong>Protagonista:</strong> Josuke Higashikata (o oitavo). <strong>Vilão:</strong> Tooru (e o Stand Wonder of U).</p>
+                            <p>Em uma Morioh reformada, um jovem com amnésia é encontrado e adotado pela família Higashikata. Ele busca sua identidade e as origens das "bolhas" que emergem de seu corpo, enquanto enfrenta uma maldição familiar e um Stand que invoca a calamidade para aqueles que o perseguem.</p>
+                            <p><em>Conceito central:</em> Stands, bolhas e mistério. Elementos náuticos e âncoras refletem a cidade litorânea.</p>`
+                },
+                9: {
+                    titulo: "Parte 9: The JOJOLands",
+                    subtitulo: "Ilhas havaianas, dinheiro e o sonho de um novo mundo.",
+                    texto: `<p><strong>Protagonista:</strong> Jodio Joestar. <strong>Vilão:</strong> Ainda em desenvolvimento (mistério nas ilhas).</p>
+                            <p>Ambientado no Havaí, Jodio Joestar e sua irmã Dragona se envolvem em um esquema de contrabando e poder. Entre praias paradisíacas e negócios obscuros, eles descobrem que o dinheiro e o "ouro" podem esconder Stands capazes de alterar a própria realidade.</p>
+                            <p><em>Conceito central:</em> Stands, riqueza e o clima tropical. A estética evoca selva, oceano vibrante e o brilho do ouro.</p>`
+                }
+            };
 
-        // ============================================================
-        // ESTADO DO JOGO
-        // ============================================================
-        var gameState = {
-            mode: 'daily',
-            currentSong: null,
-            currentVerseIndex: 0,
-            attempts: 0,
-            gameOver: false,
-            guessedSongs: [],
-            score: 0,
-            round: 1,
-            isDailyMode: true,
-            usedSongIds: [],
-            availableSongs: []
-        };
+            // ===== REFERÊNCIAS DOM =====
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            const displayDiv = document.getElementById('partDisplay');
+            const body = document.body;
 
-        // ============================================================
-        // DOM ELEMENTOS
-        // ============================================================
-        var verseDisplay = document.getElementById('verseDisplay');
-        var verseCount = document.getElementById('verseCount');
-        var songInput = document.getElementById('songInput');
-        var guessBtn = document.getElementById('guessBtn');
-        var autocompleteList = document.getElementById('autocompleteList');
-        var feedback = document.getElementById('feedbackMessage');
-        var cmpArtist = document.getElementById('cmpArtist');
-        var cmpGenre = document.getElementById('cmpGenre');
-        var cmpDecade = document.getElementById('cmpDecade');
-        var cmpNationality = document.getElementById('cmpNationality');
-        var cmpPopularity = document.getElementById('cmpPopularity');
-        var scoreDisplay = document.getElementById('scoreDisplay');
-        var roundDisplay = document.getElementById('roundDisplay');
-        var nextRoundContainer = document.getElementById('nextRoundContainer');
-        var nextRoundBtn = document.getElementById('nextRoundBtn');
-        var dailyModeBtn = document.getElementById('dailyModeBtn');
-        var infiniteModeBtn = document.getElementById('infiniteModeBtn');
-        var lyricCard = document.getElementById('lyricCard');
+            // ===== FUNÇÃO PARA TROCAR DE PARTE =====
+            function loadPart(partNumber) {
+                // Atualiza dados
+                const data = partesData[partNumber];
+                if (!data) return;
 
-        // ============================================================
-        // FUNCOES DO JOGO
-        // ============================================================
-        function getDailySong() {
-            var today = new Date();
-            var dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
-            var index = dayOfYear % MUSIC_DB.length;
-            return MUSIC_DB[index];
-        }
+                // Renderiza o conteúdo
+                displayDiv.innerHTML = `
+                    <h1 class="part-title">${data.titulo}</h1>
+                    <div class="part-sub">${data.subtitulo}</div>
+                    <div class="part-text">${data.texto}</div>
+                `;
 
-        function getRandomSong() {
-            if (gameState.availableSongs.length === 0) {
-                gameState.availableSongs = MUSIC_DB.map(function(s) { return s.id; });
-                gameState.usedSongIds = [];
+                // Atualiza classes dos botões
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                document.querySelector(`.tab-btn[data-part="${partNumber}"]`).classList.add('active');
+
+                // MUDA O TEMA DO BODY
+                // Remove todas as classes theme-p*
+                body.className = body.className.split(' ').filter(c => !c.startsWith('theme-p')).join(' ');
+                body.classList.add(`theme-p${partNumber}`);
             }
 
-            var available = gameState.availableSongs.filter(function(id) {
-                return gameState.usedSongIds.indexOf(id) === -1;
+            // ===== EVENTOS DOS BOTÕES =====
+            tabButtons.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    const part = parseInt(this.dataset.part, 10);
+                    loadPart(part);
+                });
             });
 
-            if (available.length === 0) {
-                gameState.usedSongIds = [];
-                available = gameState.availableSongs.slice();
-            }
+            // ===== CARREGAR PARTE INICIAL (Parte 1) =====
+            loadPart(1);
 
-            var randomIndex = Math.floor(Math.random() * available.length);
-            var songId = available[randomIndex];
-            gameState.usedSongIds.push(songId);
-
-            var song = MUSIC_DB.find(function(s) { return s.id === songId; });
-            return song || MUSIC_DB[0];
-        }
-
-        function loadNewSong() {
-            feedback.innerHTML = '<span class="loading-spinner"></span> Carregando nova letra...';
-            feedback.className = 'feedback-message loading';
-
-            var song;
-            if (gameState.isDailyMode) {
-                song = getDailySong();
-            } else {
-                song = getRandomSong();
-                if (!song) {
-                    song = MUSIC_DB[0];
+            // (Opcional) Pequeno toque: teclas 1-9 para navegar
+            document.addEventListener('keydown', (e) => {
+                const num = parseInt(e.key, 10);
+                if (num >= 1 && num <= 9) {
+                    const btn = document.querySelector(`.tab-btn[data-part="${num}"]`);
+                    if (btn) btn.click();
                 }
-            }
-
-            gameState.currentSong = song;
-            gameState.currentVerseIndex = 0;
-            gameState.attempts = 0;
-            gameState.gameOver = false;
-            gameState.guessedSongs = [];
-
-            updateVerseDisplay();
-            updateComparisonTable(null);
-
-            feedback.innerHTML = ' Adivinhe a música pela letra!';
-            feedback.className = 'feedback-message';
-            guessBtn.disabled = false;
-            songInput.disabled = false;
-            songInput.value = '';
-            nextRoundContainer.style.display = 'none';
-            lyricCard.classList.remove('pulse-glow');
-
-            if (gameState.isDailyMode) {
-                feedback.innerHTML = ' Letra do dia! Adivinhe a música!';
-            } else {
-                feedback.innerHTML = ' Nova letra! Adivinhe a música! (Rodada ' + gameState.round + ')';
-            }
-        }
-
-        function updateVerseDisplay() {
-            var song = gameState.currentSong;
-            if (!song) return;
-
-            var verseText = song.lyrics[gameState.currentVerseIndex] || '...';
-            verseDisplay.innerHTML = '<i class="fas fa-quote-left"></i> ' + verseText + ' <i class="fas fa-quote-right"></i>';
-            var total = song.lyrics.length;
-            verseCount.textContent = 'verso ' + (gameState.currentVerseIndex + 1) + ' de ' + total;
-        }
-
-        function updateComparisonTable(guessSong) {
-            if (!guessSong || !gameState.currentSong) {
-                cmpArtist.innerHTML = '---';
-                cmpGenre.innerHTML = '---';
-                cmpDecade.innerHTML = '---';
-                cmpNationality.innerHTML = '---';
-                cmpPopularity.innerHTML = '---';
-                return;
-            }
-
-            var currentSong = gameState.currentSong;
-
-            var artistMatch = guessSong.artist === currentSong.artist ? 'green' :
-                (currentSong.artist.includes(guessSong.artist) || guessSong.artist.includes(currentSong.artist) ? 'yellow' :
-                    'red');
-            cmpArtist.innerHTML = '<span class="badge ' + artistMatch + '">' + guessSong.artist + '</span>';
-
-            var genreMatch = guessSong.genre === currentSong.genre ? 'green' : 'red';
-            cmpGenre.innerHTML = '<span class="badge ' + genreMatch + '">' + guessSong.genre + '</span>';
-
-            var guessYear = guessSong.year || 2000;
-            var targetYear = currentSong.year || 2000;
-            var decadeArrow = '';
-            if (guessYear < targetYear) decadeArrow =
-                '<span class="arrow-up"><i class="fas fa-arrow-up"></i> mais antiga</span>';
-            else if (guessYear > targetYear) decadeArrow =
-                '<span class="arrow-down"><i class="fas fa-arrow-down"></i> mais recente</span>';
-            else decadeArrow = '<span style="color:#7affb0;"> mesma decada</span>';
-            cmpDecade.innerHTML = guessYear + ' ' + decadeArrow;
-
-            var natMatch = guessSong.nationality === currentSong.nationality ? 'green' : 'red';
-            cmpNationality.innerHTML = '<span class="badge ' + natMatch + '">' + guessSong.nationality + '</span>';
-
-            var popDiff = (guessSong.popularity || 500) - (currentSong.popularity || 500);
-            var popArrow = '';
-            if (popDiff > 0) popArrow = '<span class="arrow-up"><i class="fas fa-arrow-up"></i> mais popular</span>';
-            else if (popDiff < 0) popArrow = '<span class="arrow-down"><i class="fas fa-arrow-down"></i> menos popular</span>';
-            else popArrow = '<span style="color:#7affb0;"> igual</span>';
-            cmpPopularity.innerHTML = (guessSong.popularity || 500) + ' ' + popArrow;
-        }
-
-        function checkGuess(guessedSong) {
-            var currentSong = gameState.currentSong;
-            if (!currentSong) return false;
-
-            var guessedTitle = guessedSong.title.toLowerCase().trim();
-            var currentTitle = currentSong.title.toLowerCase().trim();
-
-            if (guessedTitle === currentTitle ||
-                guessedTitle.includes(currentTitle) ||
-                currentTitle.includes(guessedTitle)) {
-
-                gameState.gameOver = true;
-                var points = Math.max(100 - (gameState.attempts * 10), 10);
-                gameState.score += points;
-                updateScoreAndRound();
-
-                feedback.innerHTML = ' VOCE ACERTOU! +' + points + ' pontos!';
-                feedback.className = 'feedback-message success';
-                spawnConfetti();
-                lyricCard.classList.add('pulse-glow');
-
-                gameState.currentVerseIndex = currentSong.lyrics.length - 1;
-                updateVerseDisplay();
-
-                guessBtn.disabled = true;
-                songInput.disabled = true;
-                nextRoundContainer.style.display = 'block';
-
-                return true;
-            }
-            return false;
-        }
-
-        function updateScoreAndRound() {
-            scoreDisplay.textContent = gameState.score;
-            roundDisplay.textContent = gameState.round;
-        }
-
-        function spawnConfetti() {
-            var container = document.createElement('div');
-            container.className = 'confetti-container';
-            document.body.appendChild(container);
-            var colors = ['#ff3b9e', '#b44cff', '#3bc9ff', '#ffd966', '#7affb0', '#ff6b6b'];
-            for (var i = 0; i < 120; i++) {
-                var el = document.createElement('div');
-                el.className = 'confetti';
-                el.style.left = Math.random() * 100 + '%';
-                el.style.background = colors[Math.floor(Math.random() * colors.length)];
-                el.style.width = (Math.random() * 8 + 4) + 'px';
-                el.style.height = (Math.random() * 8 + 4) + 'px';
-                el.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
-                el.style.animationDuration = (Math.random() * 2 + 1.5) + 's';
-                el.style.animationDelay = (Math.random() * 0.8) + 's';
-                container.appendChild(el);
-            }
-            setTimeout(function() { container.remove(); }, 4000);
-        }
-
-        function renderAutocomplete(filter) {
-            filter = filter || '';
-            var lower = filter.toLowerCase();
-
-            var filtered = MUSIC_DB.filter(function(item) {
-                return item.title.toLowerCase().indexOf(lower) !== -1 ||
-                    item.artist.toLowerCase().indexOf(lower) !== -1;
             });
 
-            autocompleteList.innerHTML = '';
-            if (filtered.length === 0 || filter === '') {
-                autocompleteList.classList.remove('active');
-                return;
-            }
-
-            autocompleteList.classList.add('active');
-            for (var j = 0; j < Math.min(10, filtered.length); j++) {
-                var item = filtered[j];
-                var div = document.createElement('div');
-                div.className = 'autocomplete-item';
-                div.innerHTML = '<span>' + item.title + '</span><span class="artist-name">' + item.artist +
-                '</span>';
-                div.addEventListener('click', (function(itemData) {
-                    return function() {
-                        songInput.value = itemData.title;
-                        autocompleteList.classList.remove('active');
-                    };
-                })(item));
-                autocompleteList.appendChild(div);
-            }
-        }
-
-        function handleGuess() {
-            if (gameState.gameOver) return;
-            var query = songInput.value.trim();
-            if (query === '') {
-                feedback.innerHTML = ' Digite o nome da música ou artista.';
-                feedback.className = 'feedback-message error';
-                return;
-            }
-
-            var foundSong = null;
-            for (var i = 0; i < MUSIC_DB.length; i++) {
-                if (MUSIC_DB[i].title.toLowerCase() === query.toLowerCase()) {
-                    foundSong = MUSIC_DB[i];
-                    break;
-                }
-            }
-
-            if (!foundSong) {
-                feedback.innerHTML = ' Música não encontrada. Tente novamente.';
-                feedback.className = 'feedback-message error';
-                return;
-            }
-
-            var alreadyGuessed = false;
-            for (var j = 0; j < gameState.guessedSongs.length; j++) {
-                if (gameState.guessedSongs[j].id === foundSong.id) {
-                    alreadyGuessed = true;
-                    break;
-                }
-            }
-
-            if (alreadyGuessed) {
-                feedback.innerHTML = ' Você já tentou essa música. Escolha outra.';
-                feedback.className = 'feedback-message error';
-                return;
-            }
-
-            gameState.attempts++;
-            gameState.guessedSongs.push(foundSong);
-            updateComparisonTable(foundSong);
-
-            var isCorrect = checkGuess(foundSong);
-            if (isCorrect) {
-                return;
-            }
-
-            if (gameState.currentSong &&
-                gameState.currentVerseIndex < gameState.currentSong.lyrics.length - 1) {
-                gameState.currentVerseIndex++;
-                updateVerseDisplay();
-            }
-
-            feedback.innerHTML = ' Errou! Tente novamente (tentativa ' + gameState.attempts + ')';
-            feedback.className = 'feedback-message error';
-            songInput.value = '';
-            songInput.focus();
-            autocompleteList.classList.remove('active');
-        }
-
-        function nextRound() {
-            gameState.round++;
-            updateScoreAndRound();
-            nextRoundContainer.style.display = 'none';
-            loadNewSong();
-        }
-
-        function switchMode(mode) {
-            gameState.isDailyMode = (mode === 'daily');
-            gameState.round = 1;
-            gameState.score = 0;
-            gameState.usedSongIds = [];
-            gameState.availableSongs = MUSIC_DB.map(function(s) { return s.id; });
-            updateScoreAndRound();
-
-            dailyModeBtn.classList.toggle('active', mode === 'daily');
-            infiniteModeBtn.classList.toggle('active', mode === 'infinite');
-
-            loadNewSong();
-        }
-
-        // ============================================================
-        // EVENT LISTENERS
-        // ============================================================
-        songInput.addEventListener('input', function(e) {
-            var val = e.target.value;
-            renderAutocomplete(val);
-        });
-
-        songInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                handleGuess();
-            }
-            if (e.key === 'Escape') {
-                autocompleteList.classList.remove('active');
-            }
-        });
-
-        guessBtn.addEventListener('click', handleGuess);
-        nextRoundBtn.addEventListener('click', nextRound);
-
-        dailyModeBtn.addEventListener('click', function() {
-            if (!gameState.isDailyMode) {
-                switchMode('daily');
-            }
-        });
-
-        infiniteModeBtn.addEventListener('click', function() {
-            if (gameState.isDailyMode) {
-                switchMode('infinite');
-            }
-        });
-
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('.search-input-wrapper')) {
-                autocompleteList.classList.remove('active');
-            }
-        });
-
-        // ============================================================
-        // INICIALIZACAO
-        // ============================================================
-        function initGame() {
-            gameState.isDailyMode = true;
-            gameState.score = 0;
-            gameState.round = 1;
-            gameState.availableSongs = MUSIC_DB.map(function(s) { return s.id; });
-            gameState.usedSongIds = [];
-            updateScoreAndRound();
-            loadNewSong();
-            console.log(' Liricle iniciado com ' + MUSIC_DB.length + ' musicas!');
-            console.log(' Modo: ' + (gameState.isDailyMode ? 'Diario' : 'Infinito'));
-            console.log(' Adivinhe a música pela letra!');
-        }
-
-        initGame();
+        })();
     </script>
 </body>
 </html>
