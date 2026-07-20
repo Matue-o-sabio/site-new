@@ -1,302 +1,940 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>RPG Canvas - Mecânicas e Boss</title>
-    <style>
-        body {
-            margin: 0;
-            background-color: #121212;
-            color: #fff;
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-        }
-        canvas {
-            border: 3px solid #444;
-            background-color: #1e1e1e;
-        }
-        .instructions {
-            margin-top: 10px;
-            font-size: 14px;
-            color: #aaa;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tibia Retro 2D - Epic Edition v2</title>
+  <style>
+    /* ==========================================================================
+       ESTILOS GERAIS E INTERFACE
+       ========================================================================== */
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+    body { background-color: #050505; color: #e0e0e0; font-family: 'Courier New', Courier, monospace; display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow: hidden; }
+    
+    #game-container { display: flex; flex-direction: row; background: #1a1613; border: 4px solid #3d3122; box-shadow: 0 0 40px rgba(0, 0, 0, 1); border-radius: 6px; padding: 12px; gap: 14px; position: relative; }
+    
+    #canvas-wrapper { position: relative; border: 2px solid #292015; background-color: #000; box-shadow: inset 0 0 20px #000; }
+    canvas { display: block; image-rendering: pixelated; }
+
+    #ui-panel { width: 320px; display: flex; flex-direction: column; gap: 10px; }
+    .ui-box { background: #211c18; border: 2px solid #4a3c28; border-radius: 4px; padding: 10px; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); }
+    .ui-header { color: #f0c878; font-weight: bold; font-size: 13px; text-transform: uppercase; border-bottom: 1px solid #4a3c28; padding-bottom: 4px; margin-bottom: 8px; letter-spacing: 1px; text-shadow: 1px 1px 2px #000; }
+
+    .status-group { display: flex; flex-direction: column; gap: 6px; }
+    .bar-container { background: #0a0a0a; border: 1px solid #332719; height: 18px; border-radius: 3px; position: relative; overflow: hidden; }
+    .bar-fill { height: 100%; width: 100%; transition: width 0.2s ease-out; }
+    .bar-hp { background: linear-gradient(to right, #8b0000, #f44336); }
+    .bar-mp { background: linear-gradient(to right, #0d47a1, #2196f3); }
+    .bar-exp { background: linear-gradient(to right, #b8860b, #ffeb3b); }
+    .bar-text { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; color: #fff; text-shadow: 1px 1px 2px #000; }
+
+    .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; font-size: 11px; color: #bbb; margin-bottom: 8px;}
+    
+    .equip-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+    .equip-slot { background: #14110f; border: 1px dashed #544430; padding: 4px; font-size: 10px; text-align: center; color: #888; }
+    .equipped-item { color: #ffd700; font-weight: bold; text-shadow: 0 0 5px rgba(255, 215, 0, 0.4); }
+    .equipped-epic { color: #ff55ff; font-weight: bold; text-shadow: 0 0 5px rgba(255, 85, 255, 0.4); }
+
+    .hotbar-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+    .hotkey-slot { background: #14110f; border: 1px solid #4a3c28; border-radius: 3px; padding: 6px; text-align: center; font-size: 10px; position: relative;}
+    .hotkey-num { color: #f0c878; font-weight: bold; display: block; margin-bottom: 2px; }
+    .hotkey-count { color: #fff; font-weight: bold; font-size: 12px; }
+
+    #combat-log { height: 130px; background: #0f0d0b; border: 1px inset #292015; border-radius: 3px; padding: 6px; font-size: 11px; overflow-y: auto; display: flex; flex-direction: column-reverse; gap: 3px; }
+    .log-entry { margin-bottom: 2px; line-height: 1.3; }
+    .log-hit { color: #ff5555; }
+    .log-heal { color: #55ff55; }
+    .log-info { color: #aaaaff; }
+    .log-exp { color: #ffd700; }
+    .log-item { color: #ffaa00; font-weight: bold;}
+    .log-epic { color: #ff55ff; font-weight: bold;}
+
+    .overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 5, 5, 0.95); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 100; }
+    .creation-box { background: #1a1613; border: 2px solid #544430; padding: 24px; border-radius: 6px; width: 340px; box-shadow: 0 0 30px #000; }
+    .creation-box h2 { color: #f0c878; text-align: center; margin-bottom: 16px; font-size: 18px; border-bottom: 1px solid #4a3c28; padding-bottom: 6px; }
+    .form-group { margin-bottom: 12px; }
+    .form-group label { display: block; font-size: 11px; color: #aaa; margin-bottom: 4px; text-transform: uppercase;}
+    .form-group input, .form-group select { width: 100%; padding: 8px; background: #0f0d0b; border: 1px solid #4a3c28; color: #fff; font-family: inherit; outline: none; }
+    .btn-action { width: 100%; padding: 12px; background: linear-gradient(to bottom, #4a3c28, #292015); border: 1px solid #f0c878; color: #fff; font-weight: bold; font-family: inherit; cursor: pointer; margin-top: 10px; text-transform: uppercase; transition: 0.2s;}
+    .btn-action:hover { background: linear-gradient(to bottom, #5c4a32, #3d3122); box-shadow: 0 0 10px rgba(240, 200, 120, 0.3);}
+    
+    #death-overlay { display: none; background: rgba(50, 0, 0, 0.9); }
+    #death-overlay h1 { color: #ff5555; margin-bottom: 20px; font-size: 32px; text-shadow: 2px 2px 5px #000; }
+  </style>
 </head>
 <body>
 
-    <h1>RPG Canvas: Mobs, Biomas e Boss Final</h1>
-    <canvas id="gameCanvas" width="800" height="600"></canvas>
-    <div class="instructions">
-        Controles: <b>WASD</b> para mover | <b>Clique do Mouse</b> para atacar de longe (Classe Ranged)
+  <div id="game-container">
+    
+    <div id="creation-overlay" class="overlay">
+      <div class="creation-box">
+        <h2>Criar Personagem</h2>
+        <div class="form-group">
+          <label>Nome do Herói:</label>
+          <input type="text" id="char-name" value="Aventureiro" maxlength="12">
+        </div>
+        <div class="form-group">
+          <label>Raça:</label>
+          <select id="char-race">
+            <option value="human">Humano (Balanceado)</option>
+            <option value="elf">Elfo (+Speed, +Regen MP)</option>
+            <option value="dwarf">Anão (+Def, +HP Máx)</option>
+            <option value="orc">Orc (+Dano Físico)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Classe:</label>
+          <select id="char-class">
+            <option value="knight">Knight (Melee / Tanque)</option>
+            <option value="paladin">Paladin (Ranged Attack)</option>
+            <option value="sorcerer">Sorcerer (Ranged / Magia)</option>
+            <option value="druid">Druid (Melee / Cura)</option>
+          </select>
+        </div>
+        <button class="btn-action" onclick="startGame()">Entrar no Mundo</button>
+      </div>
     </div>
 
-<script>
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
+    <div id="death-overlay" class="overlay">
+      <h1>VOCÊ MORREU</h1>
+      <button class="btn-action" style="width: 200px;" onclick="location.reload()">Renascer</button>
+    </div>
 
-// --- 1. DEFINIÇÃO DE BIOMAS ---
-const biomes = {
-    forest: { x: 50, y: 50, width: 300, height: 500, color: 'rgba(34, 139, 34, 0.2)' },
-    desert: { x: 450, y: 50, width: 300, height: 500, color: 'rgba(218, 165, 32, 0.2)' }
-};
+    <div id="canvas-wrapper">
+      <canvas id="gameCanvas" width="512" height="512"></canvas>
+    </div>
 
-// --- 2. PLAYER (Spawn na Floresta + Ranged) ---
-const player = {
-    x: biomes.forest.x + 100, // Spawn dentro da Floresta
-    y: biomes.forest.y + 100,
-    radius: 12,
-    speed: 3,
-    color: '#00ffff',
-    attackRange: 250, // Alcance da classe Ranged
-    keys: {}
-};
+    <div id="ui-panel">
+      <div class="ui-box">
+        <div class="ui-header" id="ui-player-name">Hero (Lvl 1)</div>
+        <div class="status-group">
+          <div class="bar-container"><div id="hp-bar" class="bar-fill bar-hp"></div><div id="hp-text" class="bar-text">100 / 100</div></div>
+          <div class="bar-container"><div id="mp-bar" class="bar-fill bar-mp"></div><div id="mp-text" class="bar-text">50 / 50</div></div>
+          <div class="bar-container"><div id="exp-bar" class="bar-fill bar-exp"></div><div id="exp-text" class="bar-text">XP: 0 / 100</div></div>
+        </div>
+      </div>
 
-// --- 3. MOBS COM RESTRIÇÃO DE BIOMA (LEASH) ---
-class Mob {
-    constructor(x, y, maxLeashDistance, color) {
-        this.x = x;
-        this.y = y;
-        this.originX = x;
-        this.originY = y;
-        this.maxLeashDistance = maxLeashDistance; // Limite do Bioma
-        this.radius = 10;
-        this.speed = 1.8;
-        this.color = color;
-        this.isReturning = false;
-    }
+      <div class="ui-box">
+        <div class="ui-header">Atributos & Equipamentos</div>
+        <div class="stats-grid">
+          <div>Atk: <span id="stat-atk" style="color:#ff5555; font-weight:bold;">0</span></div>
+          <div>Def: <span id="stat-def" style="color:#55ff55; font-weight:bold;">0</span></div>
+        </div>
+        <div class="equip-grid">
+          <div class="equip-slot" id="equip-weapon">Arma: [ Vazio ]</div>
+          <div class="equip-slot" id="equip-armor">Traje: [ Vazio ]</div>
+          <div class="equip-slot" id="equip-accessory">Acessório: [ Vazio ]</div>
+          <div class="equip-slot" id="equip-boots">Botas: [ Vazio ]</div>
+        </div>
+      </div>
 
-    update() {
-        const distFromOrigin = Math.hypot(this.x - this.originX, this.y - this.originY);
-        const distToPlayer = Math.hypot(this.x - player.x, this.y - player.y);
+      <div class="ui-box">
+        <div class="ui-header">Poções & Magia (MÁX 5)</div>
+        <div class="hotbar-grid">
+          <div class="hotkey-slot">
+            <span class="hotkey-num">[1] HP Pot</span>
+            <span class="hotkey-count" id="count-hp">0x</span>
+          </div>
+          <div class="hotkey-slot">
+            <span class="hotkey-num">[2] MP Pot</span>
+            <span class="hotkey-count" id="count-mp">0x</span>
+          </div>
+          <div class="hotkey-slot" style="background:#2b1a38; border-color:#8a2be2;">
+            <span class="hotkey-num">[3] Magia</span>
+            <span id="skill-name-label" style="font-size:9px; color:#ddd;">Habilidade</span>
+          </div>
+        </div>
+      </div>
 
-        // Se passou do limite do bioma, força o retorno
-        if (distFromOrigin > this.maxLeashDistance) {
-            this.isReturning = true;
+      <div class="ui-box" style="flex: 1; display: flex; flex-direction: column;">
+        <div class="ui-header">Log de Acontecimentos</div>
+        <div id="combat-log"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ==========================================================================
+       CONFIGURAÇÕES E CONSTANTES
+       ========================================================================== */
+    const TILE_SIZE = 32;
+    const MAP_SIZE = 100;
+
+    const TILE = { 
+      GRASS: 0, TREE: 1, 
+      SAND: 2, CACTUS: 3, 
+      SNOW: 4, ICE_WALL: 5,
+      LAVA_FLOOR: 6, LAVA_WALL: 7, LAVA_POOL: 8,
+      DUNGEON_FLOOR: 9, DUNGEON_WALL: 10 
+    };
+
+    const RACES = {
+      human: { name: 'Humano', hpBonus: 1.0, mpBonus: 1.0, atkBonus: 1.0, defBonus: 1.0, speedBonus: 1.0, color: '#f1c27d' },
+      elf:   { name: 'Elfo',   hpBonus: 0.9, mpBonus: 1.3, atkBonus: 1.0, defBonus: 0.9, speedBonus: 1.2, color: '#e0d2b4' },
+      dwarf: { name: 'Anão',   hpBonus: 1.3, mpBonus: 0.8, atkBonus: 1.0, defBonus: 1.3, speedBonus: 0.9, color: '#d4a373' },
+      orc:   { name: 'Orc',    hpBonus: 1.1, mpBonus: 0.7, atkBonus: 1.3, defBonus: 1.0, speedBonus: 1.0, color: '#5c8a4d' }
+    };
+
+    const CLASSES = {
+      knight:   { name: 'Knight',   baseHp: 150, baseMp: 30,  baseAtk: 18, baseDef: 12, color: '#9e9e9e', skill: 'Exori (AoE)', isRanged: false },
+      paladin:  { name: 'Paladin',  baseHp: 110, baseMp: 60,  baseAtk: 15, baseDef: 8,  color: '#ffc107', skill: 'Holy Bolt', isRanged: true },
+      sorcerer: { name: 'Sorcerer', baseHp: 80,  baseMp: 120, baseAtk: 22, baseDef: 4,  color: '#9c27b0', skill: 'Hell Core', isRanged: true },
+      druid:    { name: 'Druid',    baseHp: 95,  baseMp: 100, baseAtk: 14, baseDef: 6,  color: '#4caf50', skill: 'Heal Wave', isRanged: false }
+    };
+
+    const EQUIP_DATA = {
+      boots_speed: { slot: 'boots', name: 'Botas Aladas', speedBonus: 1.5, type: 'normal' },
+      desert_shield: { slot: 'armor', name: 'Escudo Escaravelho', defBonus: 8, type: 'normal' },
+      frost_armor: { slot: 'armor', name: 'Armadura Glacial', hpBonus: 100, defBonus: 12, type: 'normal' },
+      mad_crown: { slot: 'accessory', name: 'Coroa do Rei Louco', mpRegen: true, type: 'normal' },
+      nature_amulet: { slot: 'accessory', name: 'Amuleto da Vida', hpRegen: true, type: 'epic' },
+      sand_stinger: { slot: 'weapon', name: 'Ferrão Dourado', atkBonus: 15, type: 'epic' },
+      ice_ring: { slot: 'accessory', name: 'Anel do Inverno', maxMpBonus: 80, type: 'epic' },
+      fire_sword: { slot: 'weapon', name: 'Espada de Lava', atkBonus: 25, type: 'epic' }
+    };
+
+    const MONSTER_TYPES = {
+      rat: { name: 'Cave Rat', hp: 20, atk: 5, def: 2, exp: 10, speed: 25, color: '#8d6e63', isBoss: false },
+      spider: { name: 'Giant Spider', hp: 45, atk: 12, def: 5, exp: 35, speed: 18, color: '#2e7d32', isBoss: false },
+      boss_ent: { name: 'Guardião Ancestral', hp: 300, atk: 25, def: 15, exp: 250, speed: 45, color: '#1b5e20', isBoss: true, dropId: 'nature_amulet' },
+      
+      orc: { name: 'Sand Orc', hp: 50, atk: 10, def: 8, exp: 25, speed: 30, color: '#cddc39', isBoss: false },
+      scorpion: { name: 'Desert Scorpion', hp: 60, atk: 18, def: 6, exp: 40, speed: 20, color: '#ffb300', isBoss: false },
+      boss_pharaoh: { name: 'Faraó Amaldiçoado', hp: 400, atk: 35, def: 10, exp: 350, speed: 35, color: '#ffeb3b', isBoss: true, dropId: 'sand_stinger' },
+      
+      wolf: { name: 'Winter Wolf', hp: 70, atk: 15, def: 5, exp: 45, speed: 20, color: '#e0f7fa', isBoss: false },
+      yeti: { name: 'Yeti', hp: 120, atk: 20, def: 12, exp: 70, speed: 40, color: '#81d4fa', isBoss: false },
+      boss_golem: { name: 'Golem de Gelo', hp: 500, atk: 40, def: 25, exp: 450, speed: 50, color: '#00bcd4', isBoss: true, dropId: 'ice_ring' },
+      
+      demon_imp: { name: 'Demon Imp', hp: 90, atk: 25, def: 5, exp: 65, speed: 25, color: '#ff5252', isBoss: false },
+      demon: { name: 'Lava Demon', hp: 150, atk: 30, def: 15, exp: 100, speed: 30, color: '#d32f2f', isBoss: false },
+      boss_dragon: { name: 'Shadow Dragon', hp: 800, atk: 60, def: 30, exp: 1000, speed: 40, color: '#4a148c', isBoss: true, dropId: 'fire_sword' }
+    };
+
+    let canvas = document.getElementById('gameCanvas');
+    let ctx = canvas.getContext('2d');
+    let uiInterval;
+    let camera = { x: 0, y: 0, width: canvas.width, height: canvas.height };
+    
+    let map = [];
+    let entities = { player: null, monsters: [], texts: [], items: [], projectiles: [] };
+    let keys = {};
+    let gameState = 'CREATION'; 
+
+    /* ==========================================================================
+       MAPA E SPAWN
+       ========================================================================== */
+    function generateMap() {
+      map = Array(MAP_SIZE).fill().map(() => Array(MAP_SIZE).fill(0));
+
+      for (let y = 0; y < MAP_SIZE; y++) {
+        for (let x = 0; x < MAP_SIZE; x++) {
+          let biomeFloor, biomeWall;
+          if (x < 50 && y < 50) { biomeFloor = TILE.GRASS; biomeWall = TILE.TREE; }
+          else if (x >= 50 && y < 50) { biomeFloor = TILE.SAND; biomeWall = TILE.CACTUS; }
+          else if (x < 50 && y >= 50) { biomeFloor = TILE.SNOW; biomeWall = TILE.ICE_WALL; }
+          else { biomeFloor = TILE.LAVA_FLOOR; biomeWall = TILE.LAVA_WALL; }
+
+          if (x === 0 || y === 0 || x === MAP_SIZE - 1 || y === MAP_SIZE - 1) {
+            map[y][x] = biomeWall;
+            continue;
+          }
+
+          if (Math.random() < 0.15) map[y][x] = biomeWall;
+          else {
+            map[y][x] = biomeFloor;
+            if (biomeFloor === TILE.LAVA_FLOOR && Math.random() < 0.05) map[y][x] = TILE.LAVA_POOL;
+          }
         }
-        if (this.isReturning && distFromOrigin < 10) {
-            this.isReturning = false;
+      }
+
+      for(let i=45; i<=55; i++) {
+        for(let j=0; j<MAP_SIZE; j++) {
+           if(map[i][j] !== TILE.DUNGEON_WALL && map[i][j] !== TILE.DUNGEON_FLOOR) map[i][j] = (j < 50) ? TILE.GRASS : TILE.LAVA_FLOOR;
+           if(map[j][i] !== TILE.DUNGEON_WALL && map[j][i] !== TILE.DUNGEON_FLOOR) map[j][i] = (j < 50) ? TILE.SAND : TILE.SNOW;
         }
+      }
 
-        // Movimentação
-        if (this.isReturning) {
-            this.moveTowards(this.originX, this.originY);
-        } else if (distToPlayer < 150) { // Visão do Mob
-            this.moveTowards(player.x, player.y);
+      // Limpar área de spawn do jogador (Floresta)
+      for(let sy=23; sy<=27; sy++){
+        for(let sx=23; sx<=27; sx++){
+          map[sy][sx] = TILE.GRASS;
         }
+      }
+
+      createDungeon(5, 5, 'boss_ent', 'boots_speed', ['rat', 'spider'], {xMin: 5, xMax: 16, yMin: 5, yMax: 16});
+      createDungeon(80, 5, 'boss_pharaoh', 'desert_shield', ['orc', 'scorpion'], {xMin: 80, xMax: 91, yMin: 5, yMax: 16});
+      createDungeon(5, 80, 'boss_golem', 'frost_armor', ['wolf', 'yeti'], {xMin: 5, xMax: 16, yMin: 80, yMax: 91});
+      createDungeon(80, 80, 'boss_dragon', 'mad_crown', ['demon_imp', 'demon'], {xMin: 80, xMax: 91, yMin: 80, yMax: 91});
+      
+      spawnMonstersWild();
     }
 
-    moveTowards(targetX, targetY) {
-        const angle = Math.atan2(targetY - this.y, targetX - this.x);
-        this.x += Math.cos(angle) * this.speed;
-        this.y += Math.sin(angle) * this.speed;
+    function createDungeon(startX, startY, bossType, chestDropId, mobTypes, bounds) {
+      const dSize = 12;
+      for (let y = startY; y < startY + dSize; y++) {
+        for (let x = startX; x < startX + dSize; x++) {
+          if (y === startY || y === startY + dSize - 1 || x === startX || x === startX + dSize - 1) {
+            if ((x === startX + Math.floor(dSize/2)) || (y === startY + Math.floor(dSize/2))) {
+              map[y][x] = TILE.DUNGEON_FLOOR;
+            } else { map[y][x] = TILE.DUNGEON_WALL; }
+          } else { map[y][x] = TILE.DUNGEON_FLOOR; }
+        }
+      }
+      
+      let cx = startX + Math.floor(dSize/2);
+      let cy = startY + Math.floor(dSize/2);
+      entities.monsters.push(new Monster(cx, cy, MONSTER_TYPES[bossType], bounds));
+      
+      entities.items.push({ x: startX + 2, y: startY + 2, type: 'chest', dropId: chestDropId });
+
+      for(let i=0; i<4; i++) {
+        let mx = startX + 2 + Math.floor(Math.random() * (dSize - 4));
+        let my = startY + 2 + Math.floor(Math.random() * (dSize - 4));
+        if(mx !== cx && my !== cy) {
+            let mType = mobTypes[Math.floor(Math.random() * mobTypes.length)];
+            entities.monsters.push(new Monster(mx, my, MONSTER_TYPES[mType], bounds));
+        }
+      }
     }
 
-    draw() {
-        // Desenha raio de leash em cinza fraco
-        ctx.beginPath();
-        ctx.arc(this.originX, this.originY, this.maxLeashDistance, 0, Math.PI * 2);
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
-        ctx.stroke();
-
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = this.color;
-        ctx.fill();
+    function spawnMonstersWild() {
+      for(let i=0; i<50; i++) {
+         spawnInQuadrant(1, 49, 1, 49, ['rat', 'spider']); 
+         spawnInQuadrant(51, 99, 1, 49, ['orc', 'scorpion']);
+         spawnInQuadrant(1, 49, 51, 99, ['wolf', 'yeti']);
+         spawnInQuadrant(51, 99, 51, 99, ['demon_imp', 'demon']);
+      }
     }
-}
-
-const mobs = [
-    new Mob(150, 200, 120, '#ff4444'), // Mob Floresta
-    new Mob(600, 300, 120, '#ffaa00')  // Mob Deserto
-];
-
-// --- 4. PROJÉTEIS (Player e Boss) ---
-const projectiles = [];
-
-class Projectile {
-    constructor(x, y, targetX, targetY, speed, color, isHostile = false) {
-        this.x = x;
-        this.y = y;
-        this.radius = 5;
-        this.color = color;
-        this.isHostile = isHostile;
+    function spawnInQuadrant(xMin, xMax, yMin, yMax, mobList) {
+        let mx, my;
+        do {
+            mx = Math.floor(Math.random() * (xMax - xMin)) + xMin;
+            my = Math.floor(Math.random() * (yMax - yMin)) + yMin;
+        } while(isSolid(mx, my) || (mx >= 20 && mx <= 30 && my >= 20 && my <= 30)); // evita nascer em cima do spawn do player
         
-        const angle = Math.atan2(targetY - y, targetX - x);
-        this.vx = Math.cos(angle) * speed;
-        this.vy = Math.sin(angle) * speed;
-        this.lifeTime = 120; // Frames de vida
+        let mType = mobList[Math.floor(Math.random() * mobList.length)];
+        entities.monsters.push(new Monster(mx, my, MONSTER_TYPES[mType], {xMin, xMax, yMin, yMax}));
     }
 
-    update() {
-        this.x += this.vx;
-        this.y += this.vy;
-        this.lifeTime--;
-    }
+    /* ==========================================================================
+       CLASSES E ENTIDADES
+       ========================================================================== */
+    class Player {
+      constructor(name, raceKey, classKey) {
+        const race = RACES[raceKey];
+        const cls = CLASSES[classKey];
+        
+        this.name = name;
+        this.raceKey = raceKey;
+        this.classKey = classKey;
+        this.color = race.color;
+        this.isRanged = cls.isRanged;
 
-    draw() {
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = this.color;
-        ctx.fill();
-    }
-}
+        this.baseMaxHp = Math.floor(cls.baseHp * race.hpBonus);
+        this.baseMaxMp = Math.floor(cls.baseMp * race.mpBonus);
+        this.baseAtk = Math.floor(cls.baseAtk * race.atkBonus);
+        this.baseDef = Math.floor(cls.baseDef * race.defBonus);
+        this.baseSpeed = Math.floor(100 * race.speedBonus);
+        
+        this.hp = this.baseMaxHp;
+        this.mp = this.baseMaxMp;
+        this.level = 1;
+        this.exp = 0;
+        this.expNext = 100;
+        
+        // Spawn Seguro na Floresta
+        this.x = 25;
+        this.y = 25;
+        
+        this.potions = { hp: 5, mp: 5 };
+        this.equipments = { weapon: null, armor: null, accessory: null, boots: null };
+        
+        this.maxHp = this.baseMaxHp;
+        this.maxMp = this.baseMaxMp;
+        this.atk = this.baseAtk;
+        this.def = this.baseDef;
+        this.speed = this.baseSpeed;
+        
+        this.cooldowns = { move: 0, attack: 0, skill: 0 };
+        this.isDead = false;
 
-// --- 5. BOSS FINAL COM ATAQUES ---
-const boss = {
-    x: 600,
-    y: 150,
-    radius: 25,
-    color: '#a020f0',
-    attackTimer: 0,
-    aoeWarning: false,
-    aoeRadius: 0,
+        this.recalculateStats();
+      }
 
-    update() {
-        this.attackTimer++;
+      recalculateStats() {
+        let eHp = 0, eMp = 0, eAtk = 0, eDef = 0, eSpeedMult = 1.0;
+        
+        for (const slot in this.equipments) {
+            const eqId = this.equipments[slot];
+            if(!eqId) continue;
+            const data = EQUIP_DATA[eqId];
+            if(data.hpBonus) eHp += data.hpBonus;
+            if(data.maxMpBonus) eMp += data.maxMpBonus;
+            if(data.atkBonus) eAtk += data.atkBonus;
+            if(data.defBonus) eDef += data.defBonus;
+            if(data.speedBonus) eSpeedMult *= data.speedBonus;
+        }
 
-        // A cada ~2.5 segundos escolhe um ataque aleatório
-        if (this.attackTimer > 150) {
-            this.attackTimer = 0;
-            const attackType = Math.floor(Math.random() * 3);
+        this.maxHp = this.baseMaxHp + eHp;
+        this.maxMp = this.baseMaxMp + eMp;
+        this.atk = this.baseAtk + eAtk;
+        this.def = this.baseDef + eDef;
+        this.speed = Math.floor(this.baseSpeed / eSpeedMult);
 
-            switch (attackType) {
-                case 0:
-                    this.executeDash();
-                    break;
-                case 1:
-                    this.executeSpreadShot();
-                    break;
-                case 2:
-                    this.executeAoE();
-                    break;
+        if(this.hp > this.maxHp) this.hp = this.maxHp;
+        if(this.mp > this.maxMp) this.mp = this.maxMp;
+
+        updateEquipUI();
+      }
+
+      update(dt) {
+        if (this.isDead) return;
+
+        for (let k in this.cooldowns) { if (this.cooldowns[k] > 0) this.cooldowns[k] -= dt; }
+
+        this.handleMovement();
+        this.handleActions();
+        this.passiveRegen();
+      }
+
+      handleMovement() {
+        if (this.cooldowns.move > 0) return;
+        let dx = 0, dy = 0;
+        if (keys['w']) dy = -1;
+        else if (keys['s']) dy = 1;
+        else if (keys['a']) dx = -1;
+        else if (keys['d']) dx = 1;
+
+        if (dx !== 0 || dy !== 0) {
+          let nx = this.x + dx, ny = this.y + dy;
+          if (nx >= 0 && nx < MAP_SIZE && ny >= 0 && ny < MAP_SIZE && !isSolid(nx, ny)) {
+            this.x = nx;
+            this.y = ny;
+            this.cooldowns.move = this.speed;
+            this.checkGroundItems();
+          }
+        }
+      }
+
+      handleActions() {
+        // Ataque Básico (Espaço) - Modificado para Ranged
+        if (keys[' '] && this.cooldowns.attack <= 0) {
+          let range = this.isRanged ? 4 : 1;
+          const target = getClosestMonsterAt(this.x, this.y, range);
+          
+          if (target) {
+            if (this.isRanged) {
+              // Disparo à Distância
+              let projColor = this.classKey === 'paladin' ? '#ffc107' : '#9c27b0';
+              entities.projectiles.push({
+                sx: this.x, sy: this.y, tx: target.x, ty: target.y,
+                color: projColor, progress: 0,
+                onHit: () => {
+                  if (target.hp <= 0) return;
+                  let dmg = Math.max(1, this.atk - target.def + Math.floor(Math.random() * 5));
+                  target.takeDamage(dmg);
+                  createFloatingText(target.x, target.y, dmg, '#ff5555');
+                  addLog(`Você atirou em ${target.name} por ${dmg}.`, 'log-hit');
+                }
+              });
+              this.cooldowns.attack = 500;
+            } else {
+              // Corpo a Corpo
+              let dmg = Math.max(1, this.atk - target.def + Math.floor(Math.random() * 5));
+              target.takeDamage(dmg);
+              createFloatingText(target.x, target.y, dmg, '#ff5555');
+              addLog(`Você hitou ${target.name} por ${dmg}.`, 'log-hit');
+              this.cooldowns.attack = 400;
             }
+          }
         }
 
-        // Expansão da animação do AoE
-        if (this.aoeWarning) {
-            this.aoeRadius += 2;
-            if (this.aoeRadius > 100) {
-                this.aoeWarning = false;
-                this.aoeRadius = 0;
+        // Skill (3)
+        if (keys['3'] && this.cooldowns.skill <= 0) {
+          let cost = 20;
+          if (this.mp >= cost) {
+            this.mp -= cost;
+            this.cooldowns.skill = 1500;
+            this.castSkill();
+          } else {
+            addLog("Mana insuficiente!", "log-info");
+            this.cooldowns.skill = 500;
+          }
+        }
+
+        if (keys['1'] && this.potions.hp > 0 && this.hp < this.maxHp && this.cooldowns.skill <= 0) {
+          this.potions.hp--;
+          this.healHp(50 + Math.floor(this.maxHp * 0.2));
+          this.cooldowns.skill = 300;
+        }
+        if (keys['2'] && this.potions.mp > 0 && this.mp < this.maxMp && this.cooldowns.skill <= 0) {
+          this.potions.mp--;
+          this.healMp(30 + Math.floor(this.maxMp * 0.2));
+          this.cooldowns.skill = 300;
+        }
+      }
+
+      castSkill() {
+        if (this.classKey === 'knight') {
+          addLog("Exori!", "log-info");
+          entities.monsters.forEach(m => {
+            if (Math.abs(m.x - this.x) <= 1 && Math.abs(m.y - this.y) <= 1) {
+              m.takeDamage(this.atk * 1.5);
+              createFloatingText(m.x, m.y, Math.floor(this.atk*1.5), '#ff5555');
             }
+          });
+        } else if (this.classKey === 'druid') {
+          let heal = 50 + this.level * 10;
+          this.healHp(heal);
+          addLog(`Heal Wave curou ${heal} HP.`, "log-heal");
+        } else {
+          let range = this.classKey === 'sorcerer' ? 5 : 6;
+          let dmgMult = this.classKey === 'sorcerer' ? 2.5 : 1.8;
+          let color = this.classKey === 'sorcerer' ? '#ff00ff' : '#ffff00';
+          
+          let target = getClosestMonsterAt(this.x, this.y, range);
+          if (target) {
+            entities.projectiles.push({
+              sx: this.x, sy: this.y, tx: target.x, ty: target.y,
+              color: color, progress: 0,
+              onHit: () => {
+                if(target.hp <= 0) return;
+                let dmg = Math.floor(this.atk * dmgMult);
+                target.takeDamage(dmg);
+                createFloatingText(target.x, target.y, dmg, color);
+              }
+            });
+            addLog(`Castou skill em ${target.name}!`, "log-info");
+          } else { addLog("Nenhum alvo próximo.", "log-info"); }
         }
-    },
+      }
 
-    executeDash() {
-        const angle = Math.atan2(player.y - this.y, player.x - this.x);
-        this.x += Math.cos(angle) * 80; // Avanço rápido
-        this.y += Math.sin(angle) * 80;
-    },
+      healHp(amount) {
+        this.hp = Math.min(this.maxHp, this.hp + amount);
+        createFloatingText(this.x, this.y, `+${amount}`, '#55ff55');
+      }
+      healMp(amount) {
+        this.mp = Math.min(this.maxMp, this.mp + amount);
+        createFloatingText(this.x, this.y, `+${amount}`, '#5555ff');
+      }
 
-    executeSpreadShot() {
-        // Dispara 3 projéteis em leque
-        const baseAngle = Math.atan2(player.y - this.y, player.x - this.x);
-        const angles = [baseAngle - 0.3, baseAngle, baseAngle + 0.3];
+      checkGroundItems() {
+        for (let i = entities.items.length - 1; i >= 0; i--) {
+          let item = entities.items[i];
+          if (item.x === this.x && item.y === this.y) {
+            if (item.type === 'potion_hp' && this.potions.hp < 5) {
+              this.potions.hp++;
+              addLog("Encontrou Poção de HP.", "log-item");
+              entities.items.splice(i, 1);
+            } else if (item.type === 'potion_mp' && this.potions.mp < 5) {
+              this.potions.mp++;
+              addLog("Encontrou Poção de MP.", "log-item");
+              entities.items.splice(i, 1);
+            } else if (item.type === 'chest' || item.type === 'drop') {
+                this.equipItem(item.dropId);
+                entities.items.splice(i, 1);
+            }
+          }
+        }
+      }
 
-        angles.forEach(angle => {
-            const targetX = this.x + Math.cos(angle) * 100;
-            const targetY = this.y + Math.sin(angle) * 100;
-            projectiles.push(new Projectile(this.x, this.y, targetX, targetY, 5, '#e066ff', true));
-        });
-    },
+      equipItem(itemId) {
+        const data = EQUIP_DATA[itemId];
+        if(!data) return;
+        this.equipments[data.slot] = itemId;
+        let isEpic = data.type === 'epic';
+        addLog(`Equipou: ${data.name}!`, isEpic ? 'log-epic' : 'log-item');
+        createFloatingText(this.x, this.y, "EQUIPOU", isEpic ? "#ff55ff" : "#ffff00");
+        this.recalculateStats();
+      }
 
-    executeAoE() {
-        this.aoeWarning = true;
-        this.aoeRadius = 10;
-    },
+      passiveRegen() {
+        if(Math.random() < 0.02) { 
+           let hpReg = Math.floor(this.maxHp * 0.05);
+           let mpReg = Math.floor(this.maxMp * 0.05);
+           if(this.equipments.accessory === 'nature_amulet') hpReg += 10;
+           if(this.equipments.accessory === 'mad_crown') mpReg += 10;
+           if(this.hp < this.maxHp) this.hp = Math.min(this.maxHp, this.hp + hpReg);
+           if(this.mp < this.maxMp) this.mp = Math.min(this.maxMp, this.mp + mpReg);
+        }
+      }
 
-    draw() {
-        // Animação de Alerta de AoE
-        if (this.aoeWarning) {
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.aoeRadius, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(255, 0, 0, 0.3)';
-            ctx.fill();
+      addExp(amt) {
+        this.exp += amt;
+        addLog(`Ganhou ${amt} XP.`, 'log-exp');
+        if (this.exp >= this.expNext) this.levelUp();
+      }
+
+      levelUp() {
+        this.level++;
+        this.exp -= this.expNext;
+        this.expNext = Math.floor(this.expNext * 1.5);
+        
+        const cls = CLASSES[this.classKey];
+        const race = RACES[this.raceKey];
+        
+        this.baseMaxHp += Math.floor(cls.baseHp * 0.1 * race.hpBonus);
+        this.baseMaxMp += Math.floor(cls.baseMp * 0.1 * race.mpBonus);
+        this.baseAtk += Math.floor(cls.baseAtk * 0.1 * race.atkBonus);
+        this.baseDef += Math.floor(cls.baseDef * 0.1 * race.defBonus);
+        
+        this.recalculateStats();
+        this.hp = this.maxHp;
+        this.mp = this.maxMp;
+        
+        createFloatingText(this.x, this.y, 'LEVEL UP!', '#ffff00');
+        addLog(`Avançou para o Nível ${this.level}!`, 'log-exp');
+      }
+
+      die() {
+        this.isDead = true;
+        document.getElementById('death-overlay').style.display = 'flex';
+      }
+    }
+
+    class Monster {
+      constructor(x, y, data, bounds) {
+        this.x = x; this.y = y;
+        this.name = data.name;
+        this.hp = data.hp; this.maxHp = data.hp;
+        this.atk = data.atk; this.def = data.def;
+        this.exp = data.exp;
+        this.speed = data.speed;
+        this.color = data.color;
+        this.isBoss = data.isBoss || false;
+        this.dropId = data.dropId || null;
+        this.bounds = bounds; // Limite de bioma (xMin, xMax, yMin, yMax)
+        
+        this.moveTimer = 0;
+      }
+      
+      update(dt) {
+        this.moveTimer += dt;
+        if (this.moveTimer > this.speed * 10) {
+          this.moveTimer = 0;
+          this.decideAction();
+        }
+      }
+
+      decideAction() {
+        let p = entities.player;
+        if (p.isDead) return;
+
+        let dist = Math.abs(this.x - p.x) + Math.abs(this.y - p.y);
+        let agroRange = this.isBoss ? 8 : 5;
+
+        // Ataque do Boss Final à distância
+        if (this.name === 'Shadow Dragon' && dist <= 7 && Math.random() < 0.4) {
+          entities.projectiles.push({
+            sx: this.x, sy: this.y, tx: p.x, ty: p.y, color: '#ff5500', progress: 0,
+            onHit: () => {
+              let dmg = Math.max(1, Math.floor(this.atk * 1.3) - p.def);
+              p.hp -= dmg;
+              createFloatingText(p.x, p.y, dmg, '#ff0000');
+              addLog("Shadow Dragon lançou Fireball!", 'log-hit');
+              if (p.hp <= 0) p.die();
+            }
+          });
+          return; // Pula o movimento pra focar no ataque
         }
 
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = this.color;
-        ctx.fill();
+        if (dist === 1) {
+          let dmg = Math.max(1, this.atk - p.def + Math.floor(Math.random() * 5));
+          p.hp -= dmg;
+          createFloatingText(p.x, p.y, dmg, '#ff0000');
+          if (p.hp <= 0) p.die();
+        } else if (dist <= agroRange) {
+          let dx = p.x > this.x ? 1 : p.x < this.x ? -1 : 0;
+          let dy = p.y > this.y ? 1 : p.y < this.y ? -1 : 0;
+          
+          this.tryMove(dx, dy);
+        } else if (Math.random() < 0.3) {
+          let dirs = [{x:1,y:0}, {x:-1,y:0}, {x:0,y:1}, {x:0,y:-1}];
+          let d = dirs[Math.floor(Math.random() * dirs.length)];
+          this.tryMove(d.x, d.y);
+        }
+      }
+
+      tryMove(dx, dy) {
+        let nx = this.x + dx;
+        let ny = this.y + dy;
+        
+        // Verifica paredes e sobreposição
+        if (isSolid(nx, ny)) return;
+        if (getClosestMonsterAt(nx, ny, 0)) return;
+
+        // Verifica Fronteira (Impede sair do bioma/dungeon)
+        if (this.bounds) {
+          if (nx < this.bounds.xMin || nx > this.bounds.xMax || 
+              ny < this.bounds.yMin || ny > this.bounds.yMax) {
+             return; // Bateu na "fronteira"
+          }
+        }
+
+        if (dx !== 0) this.x += dx;
+        else if (dy !== 0) this.y += dy;
+      }
+
+      takeDamage(amt) {
+        this.hp -= amt;
+        if (this.hp <= 0) {
+          this.hp = 0;
+          this.die();
+        }
+      }
+
+      die() {
+        entities.player.addExp(this.exp);
+        if (this.isBoss && this.dropId) {
+           entities.items.push({ x: this.x, y: this.y, type: 'drop', dropId: this.dropId });
+        } else {
+           let r = Math.random();
+           if (r < 0.2) entities.items.push({ x: this.x, y: this.y, type: 'potion_hp' });
+           else if (r < 0.3) entities.items.push({ x: this.x, y: this.y, type: 'potion_mp' });
+        }
+        entities.monsters = entities.monsters.filter(m => m !== this);
+      }
     }
-};
 
-// --- CONTROLES E INPUTS ---
-window.addEventListener('keydown', e => player.keys[e.key.toLowerCase()] = true);
-window.addEventListener('keyup', e => player.keys[e.key.toLowerCase()] = false);
-
-// Ataque de Longa Distância (Ranged Click)
-canvas.addEventListener('click', e => {
-    const rect = canvas.getBoundingClientRect();
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
-
-    const dist = Math.hypot(mouseX - player.x, mouseY - player.y);
-
-    // Só dispara se estiver dentro do raio de alcance Ranged
-    if (dist <= player.attackRange) {
-        projectiles.push(new Projectile(player.x, player.y, mouseX, mouseY, 7, '#00ffff', false));
-    }
-});
-
-// --- GAME LOOP ---
-function update() {
-    // Movimentação do Player
-    if (player.keys['w']) player.y -= player.speed;
-    if (player.keys['s']) player.y += player.speed;
-    if (player.keys['a']) player.x -= player.speed;
-    if (player.keys['d']) player.x += player.speed;
-
-    // Atualiza Mobs e Boss
-    mobs.forEach(mob => mob.update());
-    boss.update();
-
-    // Atualiza Projéteis
-    projectiles.forEach((p, index) => {
-        p.update();
-        if (p.lifeTime <= 0) projectiles.splice(index, 1);
-    });
-}
-
-function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Desenha Biomas
-    for (let b in biomes) {
-        const biome = biomes[b];
-        ctx.fillStyle = biome.color;
-        ctx.fillRect(biome.x, biome.y, biome.width, biome.height);
+    /* ==========================================================================
+       FUNÇÕES AUXILIARES
+       ========================================================================== */
+    function isSolid(x, y) {
+      if (x < 0 || y < 0 || x >= MAP_SIZE || y >= MAP_SIZE) return true;
+      let t = map[y][x];
+      return t === TILE.TREE || t === TILE.CACTUS || t === TILE.ICE_WALL || t === TILE.LAVA_WALL || t === TILE.DUNGEON_WALL;
     }
 
-    // Desenha Alcance do Player (Linha Fina)
-    ctx.beginPath();
-    ctx.arc(player.x, player.y, player.attackRange, 0, Math.PI * 2);
-    ctx.strokeStyle = 'rgba(0, 255, 255, 0.15)';
-    ctx.stroke();
+    function getClosestMonsterAt(x, y, range) {
+      let closest = null;
+      let minDist = Infinity;
+      for (let m of entities.monsters) {
+        let dist = Math.abs(m.x - x) + Math.abs(m.y - y);
+        if (dist <= range && dist < minDist) {
+          minDist = dist;
+          closest = m;
+        }
+      }
+      return closest;
+    }
 
-    // Desenha Entidades
-    mobs.forEach(mob => mob.draw());
-    boss.draw();
-    projectiles.forEach(p => p.draw());
+    function createFloatingText(x, y, text, color) {
+      entities.texts.push({ x, y, text, color, life: 1.0, dy: -0.5 });
+    }
 
-    // Desenha Player
-    ctx.beginPath();
-    ctx.arc(player.x, player.y, player.radius, 0, Math.PI * 2);
-    ctx.fillStyle = player.color;
-    ctx.fill();
-}
+    function addLog(msg, cssClass) {
+      const log = document.getElementById('combat-log');
+      const entry = document.createElement('div');
+      entry.className = 'log-entry ' + cssClass;
+      entry.innerText = msg;
+      log.prepend(entry);
+      if (log.childNodes.length > 20) log.removeChild(log.lastChild);
+    }
 
-function loop() {
-    update();
-    draw();
-    requestAnimationFrame(loop);
-}
+    function updateEquipUI() {
+        const p = entities.player;
+        if(!p) return;
+        const formatEquip = (id) => {
+            if(!id) return '[ Vazio ]';
+            let data = EQUIP_DATA[id];
+            let css = data.type === 'epic' ? 'equipped-epic' : 'equipped-item';
+            return `<span class="${css}">${data.name}</span>`;
+        };
+        document.getElementById('equip-weapon').innerHTML = `Arma:<br>${formatEquip(p.equipments.weapon)}`;
+        document.getElementById('equip-armor').innerHTML  = `Traje:<br>${formatEquip(p.equipments.armor)}`;
+        document.getElementById('equip-accessory').innerHTML = `Aces.:<br>${formatEquip(p.equipments.accessory)}`;
+        document.getElementById('equip-boots').innerHTML  = `Bota:<br>${formatEquip(p.equipments.boots)}`;
+    }
 
-loop();
-</script>
+    function updateUI() {
+      const p = entities.player;
+      if (!p) return;
+
+      document.getElementById('ui-player-name').innerText = `${p.name} - ${CLASSES[p.classKey].name} (Lvl ${p.level})`;
+      
+      document.getElementById('hp-bar').style.width = (p.hp / p.maxHp * 100) + '%';
+      document.getElementById('hp-text').innerText = `${p.hp} / ${p.maxHp}`;
+      
+      document.getElementById('mp-bar').style.width = (p.mp / p.maxMp * 100) + '%';
+      document.getElementById('mp-text').innerText = `${p.mp} / ${p.maxMp}`;
+      
+      document.getElementById('exp-bar').style.width = (p.exp / p.expNext * 100) + '%';
+      document.getElementById('exp-text').innerText = `XP: ${p.exp} / ${p.expNext}`;
+
+      document.getElementById('stat-atk').innerText = p.atk;
+      document.getElementById('stat-def').innerText = p.def;
+
+      document.getElementById('count-hp').innerText = p.potions.hp + 'x';
+      document.getElementById('count-mp').innerText = p.potions.mp + 'x';
+    }
+
+    /* ==========================================================================
+       MOTOR GRÁFICO (RENDERIZAÇÃO)
+       ========================================================================== */
+    function drawTile(x, y, scrX, scrY) {
+      const t = map[y][x];
+      ctx.fillStyle = '#0f0f0f'; 
+      ctx.fillRect(scrX, scrY, TILE_SIZE, TILE_SIZE);
+
+      switch (t) {
+        case TILE.GRASS: ctx.fillStyle = '#33691e'; break;
+        case TILE.TREE:  ctx.fillStyle = '#1b5e20'; break;
+        case TILE.SAND:  ctx.fillStyle = '#c2b280'; break;
+        case TILE.CACTUS:ctx.fillStyle = '#4caf50'; break;
+        case TILE.SNOW:  ctx.fillStyle = '#eceff1'; break;
+        case TILE.ICE_WALL: ctx.fillStyle = '#90a4ae'; break;
+        case TILE.LAVA_FLOOR: ctx.fillStyle = '#3e2723'; break;
+        case TILE.LAVA_POOL: ctx.fillStyle = '#d84315'; break;
+        case TILE.LAVA_WALL: ctx.fillStyle = '#212121'; break;
+        case TILE.DUNGEON_FLOOR: ctx.fillStyle = '#424242'; break;
+        case TILE.DUNGEON_WALL: ctx.fillStyle = '#616161'; break;
+      }
+      ctx.fillRect(scrX, scrY, TILE_SIZE, TILE_SIZE);
+
+      if (t === TILE.TREE || t === TILE.CACTUS) {
+        ctx.fillStyle = '#000';
+        ctx.globalAlpha = 0.3;
+        ctx.fillRect(scrX + 8, scrY + 8, TILE_SIZE - 16, TILE_SIZE - 16);
+        ctx.globalAlpha = 1.0;
+      }
+    }
+
+    function render() {
+      if (gameState !== 'PLAYING') return;
+
+      const p = entities.player;
+      let camTlsW = Math.ceil(camera.width / TILE_SIZE);
+      let camTlsH = Math.ceil(camera.height / TILE_SIZE);
+      
+      let startX = Math.floor(p.x - camTlsW / 2);
+      let startY = Math.floor(p.y - camTlsH / 2);
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (let y = 0; y <= camTlsH; y++) {
+        for (let x = 0; x <= camTlsW; x++) {
+          let mapX = startX + x;
+          let mapY = startY + y;
+          if (mapX >= 0 && mapX < MAP_SIZE && mapY >= 0 && mapY < MAP_SIZE) {
+            drawTile(mapX, mapY, x * TILE_SIZE, y * TILE_SIZE);
+          }
+        }
+      }
+
+      entities.items.forEach(it => {
+        let scrX = (it.x - startX) * TILE_SIZE;
+        let scrY = (it.y - startY) * TILE_SIZE;
+        if (scrX >= -TILE_SIZE && scrX <= camera.width && scrY >= -TILE_SIZE && scrY <= camera.height) {
+          if (it.type === 'potion_hp') { ctx.fillStyle = '#ff5555'; ctx.fillRect(scrX + 10, scrY + 14, 12, 14); }
+          else if (it.type === 'potion_mp') { ctx.fillStyle = '#5555ff'; ctx.fillRect(scrX + 10, scrY + 14, 12, 14); }
+          else if (it.type === 'chest') { ctx.fillStyle = '#8d6e63'; ctx.fillRect(scrX + 4, scrY + 8, 24, 18); ctx.fillStyle = '#ffd700'; ctx.fillRect(scrX + 14, scrY + 12, 4, 4); }
+          else if (it.type === 'drop') { 
+             ctx.fillStyle = '#ff55ff'; 
+             ctx.beginPath();
+             ctx.arc(scrX + 16, scrY + 16, 8, 0, Math.PI * 2);
+             ctx.fill();
+          }
+        }
+      });
+
+      entities.monsters.forEach(m => {
+        let scrX = (m.x - startX) * TILE_SIZE;
+        let scrY = (m.y - startY) * TILE_SIZE;
+        if (scrX >= -TILE_SIZE && scrX <= camera.width && scrY >= -TILE_SIZE && scrY <= camera.height) {
+          
+          let size = m.isBoss ? TILE_SIZE * 0.9 : TILE_SIZE * 0.7;
+          let offset = (TILE_SIZE - size) / 2;
+
+          ctx.fillStyle = m.color;
+          ctx.fillRect(scrX + offset, scrY + offset, size, size);
+          
+          ctx.fillStyle = '#000';
+          ctx.fillRect(scrX + 4, scrY - 4, TILE_SIZE - 8, 4);
+          ctx.fillStyle = '#f00';
+          ctx.fillRect(scrX + 4, scrY - 4, (TILE_SIZE - 8) * (m.hp / m.maxHp), 4);
+        }
+      });
+
+      let pScrX = (p.x - startX) * TILE_SIZE;
+      let pScrY = (p.y - startY) * TILE_SIZE;
+      ctx.fillStyle = p.color;
+      ctx.fillRect(pScrX + 4, pScrY + 4, TILE_SIZE - 8, TILE_SIZE - 8);
+
+      for (let i = entities.projectiles.length - 1; i >= 0; i--) {
+        let pr = entities.projectiles[i];
+        pr.progress += 0.1;
+        let curX = pr.sx + (pr.tx - pr.sx) * pr.progress;
+        let curY = pr.sy + (pr.ty - pr.sy) * pr.progress;
+        
+        let sX = (curX - startX) * TILE_SIZE + 16;
+        let sY = (curY - startY) * TILE_SIZE + 16;
+        
+        ctx.fillStyle = pr.color;
+        ctx.beginPath(); ctx.arc(sX, sY, 5, 0, Math.PI * 2); ctx.fill();
+
+        if (pr.progress >= 1) {
+          pr.onHit();
+          entities.projectiles.splice(i, 1);
+        }
+      }
+
+      for (let i = entities.texts.length - 1; i >= 0; i--) {
+        let t = entities.texts[i];
+        let tx = (t.x - startX) * TILE_SIZE + 16;
+        let ty = (t.y - startY) * TILE_SIZE + 16 + (t.dy * (1 - t.life) * 20);
+        
+        ctx.fillStyle = t.color;
+        ctx.font = 'bold 14px monospace';
+        ctx.textAlign = 'center';
+        ctx.globalAlpha = t.life;
+        ctx.fillText(t.text, tx, ty);
+        ctx.globalAlpha = 1.0;
+
+        t.life -= 0.02;
+        if (t.life <= 0) entities.texts.splice(i, 1);
+      }
+    }
+
+    /* ==========================================================================
+       CONTROLES E INICIALIZAÇÃO
+       ========================================================================== */
+    window.addEventListener('keydown', e => { keys[e.key.toLowerCase()] = true; });
+    window.addEventListener('keyup', e => { keys[e.key.toLowerCase()] = false; });
+
+    function startGame() {
+      const name = document.getElementById('char-name').value || 'Aventureiro';
+      const race = document.getElementById('char-race').value;
+      const cls = document.getElementById('char-class').value;
+      
+      document.getElementById('creation-overlay').style.display = 'none';
+      document.getElementById('skill-name-label').innerText = CLASSES[cls].skill;
+      
+      entities.player = new Player(name, race, cls);
+      generateMap();
+      
+      gameState = 'PLAYING';
+      
+      addLog("Bem-vindo às Terras Épicas!", "log-info");
+      addLog("Classes à distância atiram com [ESPAÇO].", "log-exp");
+
+      let lastTime = performance.now();
+      
+      function loop(now) {
+        let dt = now - lastTime;
+        lastTime = now;
+        
+        if (gameState === 'PLAYING') {
+          entities.player.update(dt);
+          entities.monsters.forEach(m => m.update(dt));
+          render();
+        }
+        requestAnimationFrame(loop);
+      }
+      
+      requestAnimationFrame(loop);
+      uiInterval = setInterval(updateUI, 100);
+    }
+  </script>
 </body>
 </html>
